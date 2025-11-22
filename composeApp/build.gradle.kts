@@ -272,17 +272,24 @@ compose.desktop {
             val appName = rootProject.extra["appName"].toString()
             val versionName = rootProject.extra["appVersionName"].toString().plus(".0")
 
-            packageName = appName
+            packageName = "ScheduleAAG"
             packageVersion = versionName
+            vendor = "P0mid00r"
+            description = "Расписание колледжа «Алтайская академия гостеприимства»"
+//            licenseFile.set(project.file("LICENSE.txt"))
 
             macOS {
                 iconFile.set(project.file("icons/icon.icns"))
                 bundleID = "com.pomidorka.scheduleaag"
             }
             windows {
+                menu = true
+                menuGroup = "start-menu-group"
+                shortcut = true
                 iconFile.set(project.file("icons/icon.ico"))
             }
             linux {
+                shortcut = true
                 iconFile.set(project.file("icons/icon.png"))
             }
         }
