@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" style="shape-rendering: geometricprecision;" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:export>
+      <bx:file format="png" href="#object-0" path="Untitled 2.png"/>
+      <bx:file format="png" href="#object-1" path="Untitled 3.png"/>
+      <bx:file format="png" href="#object-2" path="Untitled 4.png"/>
+      <bx:file format="png"/>
+    </bx:export>
+  </defs>
+  <g id="Слой_x0020_1" transform="matrix(0.073073, 0, 0, 0.073073, -10113.800781, -12543.402344)" style="transform-origin: 10625.8px 13055.4px;">
+    <circle class="fil0" cx="10626" cy="13055" r="7001" style="fill: rgb(0, 146, 71);" id="object-0"/>
+    <circle class="fil1" cx="10626" cy="13055" r="6163" style="fill: rgb(190, 160, 98);" id="object-1"/>
+    <circle class="fil0" transform="matrix(1.57519 0.560338 -0.560338 1.57519 10625.8 13055.4)" r="3281" style="fill: rgb(0, 146, 71);" id="object-2"/>
+    <g id="_2692811990192">
+      <path class="fil2" d="M10605 15440c336,-1399 901,-2387 1694,-2961 -575,-655 -924,-1437 -1047,-2346l-647 0 -656 0c-126,909 -480,1691 -1063,2346 801,572 1373,1553 1715,2943 1,6 3,12 4,18z" style="fill: rgb(255, 255, 255);"/>
+      <path class="fil2 str0" d="M10605 16871c-306,-2079 -981,-3543 -2024,-4392 376,-523 650,-1101 821,-1736 -1538,-483 -2662,-442 -3372,124 718,2103 1288,3802 1288,3802 1185,140 2281,874 3287,2202z" style="fill: rgb(190, 160, 98); stroke: rgb(190, 160, 98); stroke-width: 20px;"/>
+      <path class="fil2 str0" d="M10605 17046c-1194,-1196 -2374,-1868 -3542,-2016l-1232 -3858 809 4455c817,-213 2139,260 3965,1419z" style="fill: rgb(190, 160, 98); stroke: rgb(190, 160, 98); stroke-width: 20px;"/>
+      <polygon class="fil2 str0" points="8963,9390 12260,9390 12254,8991 8950,8991 " style="fill: rgb(190, 160, 98); stroke: rgb(190, 160, 98); stroke-width: 20px;"/>
+      <polygon class="fil2 str0" points="11961,9562 9244,9562 9254,9889 11966,9889 " style="fill: rgb(190, 160, 98); stroke: rgb(190, 160, 98); stroke-width: 20px;"/>
+      <path class="fil2 str0" d="M15113 10867c-700,-566 -1807,-607 -3323,-124 169,635 438,1213 809,1736 -1028,849 -1692,2313 -1994,4392 992,-1328 2071,-2062 3239,-2202 0,0 561,-1699 1269,-3802z" style="fill: rgb(190, 160, 98); stroke: rgb(190, 160, 98); stroke-width: 20px;"/>
+      <path class="fil2 str0" d="M14095 15030c-1151,148 -2314,820 -3490,2016 1800,-1159 3102,-1632 3907,-1419l797 -4455 -1214 3858z" style="fill: rgb(190, 160, 98); stroke: rgb(190, 160, 98); stroke-width: 20px;"/>
+    </g>
+  </g>
+</svg>

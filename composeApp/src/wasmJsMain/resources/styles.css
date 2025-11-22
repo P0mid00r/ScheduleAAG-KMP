@@ -1,0 +1,102 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Сплеш-экран */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #009247;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.splash-container {
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.splash-logo {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Скрытый сплеш-экран */
+#splash-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Удаленный сплеш-экран */
+#splash-screen.removed {
+    display: none !important;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .splash-logo {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .splash-logo {
+        max-width: 150px;
+    }
+}
+
+
+
+#gc-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.85);
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
+    display: none;
+}
+
+.warning-content {
+    max-width: 600px;
+    padding: 30px;
+    background: #b71c1c;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.warning-content h2 {
+    margin-top: 0;
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <title>Расписание ААГ | «Алтайская академия гостеприимства» - актуальное расписание</title>
+    <meta name="description" content="Актуальное расписание занятий для студентов «Алтайской академии гостеприимства» (ААГ). Удобный поиск по группам, преподавателям и аудиториям. Онлайн-расписание на неделю.">
+    <meta name="keywords" content="расписание, ааг, расписание занятий ааг, расписание колледжа ааг, алтайская, академия, гостеприимства, altag, алтег, schedule, aag">
+    <link type="text/css" rel="stylesheet" href="styles.css">
+
+    <script type="application/javascript" src="composeApp.js"></script>
+
+    <noscript>
+        <div style="text-align: center; padding: 20px;">
+            <h2>Расписание «Алтайской академии гостеприимства»</h2>
+            <p>Для работы приложения требуется включенный JavaScript</p>
+        </div>
+    </noscript>
+</head>
+<body>
+    <!-- Сплеш-экран -->
+    <div id="splash-screen">
+        <div class="splash-container">
+            <img src="icon.svg" alt="Логотип" class="splash-logo">
+        </div>
+    </div>
+
+    <noindex>
+        <div id="gc-warning">
+            <div class="warning-content">
+                <h2>Ваш браузер устарел</h2>
+                <p>Для работы приложения требуется поддержка современных функций JavaScript, включая сборку мусора (GC).</p>
+                <p>Пожалуйста, обновите ваш браузер до последней версии!</p>
+            </div>
+        </div>
+    </noindex>
+
+    <script>
+        // Управление сплеш-экраном
+        const SplashScreen = {
+            element: document.getElementById('splash-screen'),
+            isAutoHideEnabled: false,
+            autoHideTimeout: null,
+
+            // Показать сплеш-экран
+            show: function() {
+                this.element.classList.remove('hidden', 'removed');
+            },
+
+            // Немедленно скрыть без анимации
+            hide: function() {
+                if (this.autoHideTimeout) {
+                    clearTimeout(this.autoHideTimeout);
+                    this.autoHideTimeout = null;
+                }
+                this.element.classList.add('removed');
+            },
+
+            // Показать на определенное время
+            showFor: function(ms) {
+                this.show();
+                this.autoHideTimeout = setTimeout(() => {
+                    this.hide();
+                }, ms);
+            },
+
+            // Проверить, виден ли сплеш-экран
+            isVisible: function() {
+                return !this.element.classList.contains('removed') &&
+                       !this.element.classList.contains('hidden');
+            }
+        };
+
+        // Глобальные функции для вызова из Kotlin
+        window.splashScreenControl = {
+            // Немедленно скрыть сплеш-экран
+            hideSplashScreen: function() {
+                SplashScreen.hide();
+            },
+
+            // Показать сплеш-экран
+            showSplashScreen: function() {
+                SplashScreen.show();
+            },
+
+            // Показать сплеш-экран на определенное время
+            showSplashScreenFor: function(milliseconds) {
+                SplashScreen.showFor(milliseconds);
+            },
+
+            // Проверить, виден ли сплеш-экран
+            isSplashScreenVisible: function() {
+                return SplashScreen.isVisible();
+            }
+        };
+
+        // Проверка поддержки GC API
+        function isGCSupported() {
+            return typeof WeakRef !== 'undefined' &&
+                   typeof FinalizationRegistry !== 'undefined';
+        }
+
+        // Проверка при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isGCSupported()) {
+                const warning = document.getElementById('gc-warning');
+                warning.style.display = 'flex';
+
+                SplashScreen.hide();
+            }
+        });
+    </script>
+</body>
+</html>

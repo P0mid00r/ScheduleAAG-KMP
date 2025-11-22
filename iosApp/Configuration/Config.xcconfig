@@ -1,0 +1,7 @@
+TEAM_ID=
+
+PRODUCT_NAME=scheduleaag
+PRODUCT_BUNDLE_IDENTIFIER=com.pomidorka.scheduleaag.scheduleaag$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION = 1400
+MARKETING_VERSION = 1.4
