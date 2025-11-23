@@ -276,7 +276,7 @@ compose.desktop {
             packageVersion = versionName
             vendor = "P0mid00r"
             description = "Расписание колледжа «Алтайская академия гостеприимства»"
-//            licenseFile.set(project.file("LICENSE.txt"))
+            licenseFile.set(project.rootProject.file("LICENSE.txt"))
 
             macOS {
                 iconFile.set(project.file("icons/icon.icns"))
