@@ -21,3 +21,4 @@ captures
 build/
 composeApp/build/
 composeApp/release/
+/composeApp/map(org.gradle.api.file.Directory property 'buildDir' org.gradle.api.internal.file.DefaultFilePropertyFactory$PathToDirectoryTransformer@5d427453)/AppConfig.kt
