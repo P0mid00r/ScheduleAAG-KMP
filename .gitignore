@@ -19,6 +19,6 @@ captures
 
 #!composeApp/build/dist/wasmJs
 build/
-composeApp/build/config/AppConfig.kt
+composeApp/build/generated/config/AppConfig.kt
 composeApp/build/
 composeApp/release/
