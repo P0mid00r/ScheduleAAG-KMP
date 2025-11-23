@@ -20,7 +20,7 @@ val localProperties = Properties().apply {
     load(localPropertiesFile.inputStream())
 }
 
-val generatedAppConfigDir = layout.buildDirectory.dir("generated/config")
+val generatedAppConfigDir = layout.buildDirectory.dir("generated/config").get().asFile
 
 tasks.register("generateAppConfig") {
     val appName = rootProject.extra["appName"].toString()
