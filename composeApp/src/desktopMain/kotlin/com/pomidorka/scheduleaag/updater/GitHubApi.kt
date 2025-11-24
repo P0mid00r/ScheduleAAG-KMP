@@ -24,7 +24,7 @@ class GitHubApi(val httpClient: HttpClient) {
     private fun HttpStatusCode.isOk() = this == HttpStatusCode.OK
 
     private companion object {
-        const val API_URL = "https://api.github.com/"
+        const val API_URL = "https://api.github.com"
         const val REPO_NAME = "ScheduleAAG-KMP"
         const val USER_NAME = "P0mid00r"
     }
