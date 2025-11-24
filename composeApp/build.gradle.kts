@@ -274,7 +274,7 @@ compose.desktop {
             packageName = "ScheduleAAG"
             packageVersion = versionName
             vendor = "P0mid00r"
-            description = "Расписание колледжа «Алтайская академия гостеприимства»"
+            description = "College schedule of the «Altai Academy of Hospitality»"
             licenseFile.set(project.rootProject.file("LICENSE.txt"))
 
             macOS {
