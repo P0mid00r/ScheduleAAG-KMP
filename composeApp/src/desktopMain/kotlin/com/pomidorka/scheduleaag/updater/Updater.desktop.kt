@@ -9,6 +9,8 @@ internal class DesktopUpdater() : Updater {
     override suspend fun checkAvailableUpdates(): Updates? {
         try {
             val releases = getReleases() ?: return null
+            val asset = releases.availableUpdateForCurrentOS() ?: return null
+
             val gitHubVersion = releases.getVersionTag().parseVersion()
             val currentVersion = Updater.CURRENT_VERSION_NAME.parseVersion()
 
@@ -16,7 +18,7 @@ internal class DesktopUpdater() : Updater {
                 Updates(
                     versionName = gitHubVersion.toString(),
                     whatsNew = releases.getWhatsNew(),
-                    url = releases.getDownloadUrl(),
+                    url = asset.browser_download_url,
                 )
             } else null
         } catch (_: Exception) {
@@ -26,10 +28,31 @@ internal class DesktopUpdater() : Updater {
 
     private suspend fun getReleases() = gitHubApi.getReleases()
 
+    private fun ReleasesData.availableUpdateForCurrentOS(): Asset? {
+        return this.assets.find {
+            when {
+                hostOs.isWindows -> {
+                    it.name.endsWith(".msi")
+                }
+
+                hostOs.isMacOS -> {
+                    it.name.endsWith(".dmg")
+                }
+
+                hostOs.isLinux -> {
+                    it.name.endsWith(".deb")
+                }
+
+                else -> false
+            }
+        }
+    }
+
     private fun ReleasesData.getVersionTag() = this.tag_name
 
     private fun ReleasesData.getWhatsNew() = this.body
 
+    @Deprecated("Использовать availableUpdateForCurrentOS()")
     private fun ReleasesData.getDownloadUrl(): String {
         return this.assets.find {
             when {
