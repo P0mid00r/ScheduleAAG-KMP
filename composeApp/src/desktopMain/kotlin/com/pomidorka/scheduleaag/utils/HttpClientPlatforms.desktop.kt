@@ -8,7 +8,7 @@ import io.ktor.serialization.kotlinx.json.json
 
 actual fun createHttpClient(): HttpClient = HttpClient(OkHttp) {
     install(HttpTimeout) {
-        requestTimeoutMillis = 4000L
+//        requestTimeoutMillis = 4000L
     }
     install(ContentNegotiation) {
         json()
