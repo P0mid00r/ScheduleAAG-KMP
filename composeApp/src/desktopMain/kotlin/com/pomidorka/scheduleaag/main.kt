@@ -57,7 +57,7 @@ fun main() {
 
     application {
         Window(
-            title = AppConfig.APP_NAME.plus(if (isRelease) "" else " DEBUG $hostArch"),
+            title = "Расписание".plus(if (isRelease) "" else " DEBUG $hostArch"),
             icon = painterResource(Res.drawable.new_logo_vika),
             state = rememberWindowState(
                 position = WindowPosition.Aligned(Alignment.Center),
