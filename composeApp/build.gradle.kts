@@ -136,7 +136,7 @@ kotlin {
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
-            implementation("com.yandex.android:mobileads:7.16.1")
+            implementation("com.yandex.android:mobileads:7.17.0")
 
             implementation(libs.ktor.client.android)
             implementation(compose.preview)
@@ -271,7 +271,7 @@ compose.desktop {
             val appName = rootProject.extra["appName"].toString()
             val versionName = rootProject.extra["appVersionName"].toString().plus(".0")
 
-            packageName = "ScheduleAAG"
+            packageName = appName
             packageVersion = versionName
             vendor = "P0mid00r"
             description = "College schedule of the «Altai Academy of Hospitality»"
