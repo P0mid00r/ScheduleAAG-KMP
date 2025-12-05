@@ -12,3 +12,5 @@ fun WebViewState.isErrorRequest(): Boolean {
 }
 
 fun String.addProxyInUrl() = Strings.PROXY.plus(this)
+
+expect fun String.openUrl()
