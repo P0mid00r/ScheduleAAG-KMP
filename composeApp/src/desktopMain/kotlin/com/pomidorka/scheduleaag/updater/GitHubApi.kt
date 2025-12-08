@@ -6,11 +6,13 @@ import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headers
 
-class GitHubApi(val httpClient: HttpClient) {
-    val urlReleases = "$API_URL/repos/$USER_NAME/$REPO_NAME/releases/latest"
+class GitHubApi(private val httpClient: HttpClient) {
+    val urlLatestReleases = "https://github.com/$USER_NAME/$REPO_NAME/releases/latest"
 
-    suspend fun getReleases(): ReleasesData? {
-        val response = httpClient.get(urlReleases) {
+    private val urlApiLatestReleases = "$API_URL/repos/$USER_NAME/$REPO_NAME/releases/latest"
+
+    suspend fun loadReleases(): ReleasesData? {
+        val response = httpClient.get(urlApiLatestReleases) {
             headers {
                 append("content-type", "application/json; charset=utf-8")
             }

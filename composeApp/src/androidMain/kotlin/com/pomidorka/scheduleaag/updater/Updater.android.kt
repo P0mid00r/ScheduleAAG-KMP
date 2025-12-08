@@ -1,5 +1,7 @@
 package com.pomidorka.scheduleaag.updater
 
+import com.pomidorka.scheduleaag.utils.openUrl
+
 internal class AndroidUpdater : Updater {
     private val url = "https://apps.rustore.ru/app/com.pomidorka.scheduleaag"
 
@@ -18,6 +20,12 @@ internal class AndroidUpdater : Updater {
            null
         }
     }
+}
+
+actual fun Updates.update(listener: UpdateProgressListener?) {
+    listener?.onProgress(-1)
+    this.url.openUrl()
+    listener?.onCompleted()
 }
 
 actual fun getUpdater(): Updater = AndroidUpdater()

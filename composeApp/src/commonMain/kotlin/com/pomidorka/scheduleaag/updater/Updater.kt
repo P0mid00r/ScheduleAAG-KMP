@@ -18,4 +18,12 @@ data class Updates(
     val url: String,
 )
 
+expect fun Updates.update(listener: UpdateProgressListener? = null)
+
+interface UpdateProgressListener {
+    fun onProgress(percentage: Int)
+    fun onCompleted()
+    fun onError(throwable: Throwable)
+}
+
 expect fun getUpdater(): Updater
