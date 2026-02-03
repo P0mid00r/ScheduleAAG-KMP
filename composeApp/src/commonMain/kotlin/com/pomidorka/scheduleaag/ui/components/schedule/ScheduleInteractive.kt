@@ -39,12 +39,15 @@ import com.pomidorka.scheduleaag.utils.DateTime.convertMillisToDateRu
 import com.pomidorka.scheduleaag.utils.DateTime.getLocalDateFromMillis
 import com.pomidorka.scheduleaag.utils.DateTime.getMillisFromDate
 import com.pomidorka.scheduleaag.utils.Log
+import com.pomidorka.scheduleaag.utils.ScreenshotController
+import com.pomidorka.scheduleaag.utils.capturable
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 
 @Composable
 fun ScheduleInteractive(
     modifier: Modifier = Modifier,
+    screenshotController: ScreenshotController,
     navController: NavHostController
 ) {
     val loadingDialogController = LoadingDialogController(
@@ -155,7 +158,8 @@ fun ScheduleInteractive(
             .widthIn(max = 500.dp)
             .fillMaxWidth()
             .padding(12.dp, 0.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
+            .capturable(screenshotController),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

@@ -2,9 +2,9 @@ package com.pomidorka.scheduleaag.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,31 +19,26 @@ import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.ad.AdManager
 import com.pomidorka.scheduleaag.data.SettingsData
 import com.pomidorka.scheduleaag.schedule.Result
-import com.pomidorka.scheduleaag.schedule.interactive.FilterData
-import com.pomidorka.scheduleaag.schedule.interactive.FilterType
-import com.pomidorka.scheduleaag.schedule.interactive.Schedule
-import com.pomidorka.scheduleaag.schedule.interactive.ScheduleInteractiveApi
-import com.pomidorka.scheduleaag.schedule.interactive.ScheduleType
+import com.pomidorka.scheduleaag.schedule.interactive.*
 import com.pomidorka.scheduleaag.schedule.old.ScheduleApi
 import com.pomidorka.scheduleaag.ui.Green
 import com.pomidorka.scheduleaag.ui.components.BackgroundCells
+import com.pomidorka.scheduleaag.ui.components.ShareFloatingActionButton
 import com.pomidorka.scheduleaag.ui.components.TopAppBar
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialog
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialogController
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
+import com.pomidorka.scheduleaag.ui.components.alertdialogs.*
 import com.pomidorka.scheduleaag.ui.components.schedule.ScheduleItem
-import com.pomidorka.scheduleaag.utils.DateTime
+import com.pomidorka.scheduleaag.utils.*
 import com.pomidorka.scheduleaag.utils.DateTime.convertMillisToDate
 import com.pomidorka.scheduleaag.utils.DateTime.convertMillisToDateRu
 import com.pomidorka.scheduleaag.utils.DateTime.getDayNameInRussian
 import com.pomidorka.scheduleaag.utils.DateTime.getMillisFromDate
-import com.pomidorka.scheduleaag.utils.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.datetime.*
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
 private var scheduleList by mutableStateOf(emptyList<Schedule>())
 private var date by mutableLongStateOf(DateTime.getCurrentMillis())
@@ -60,6 +55,13 @@ fun ScheduleViewerScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val screenshotController = rememberScreenshotController()
+    val shareManager = rememberShareManager()
+    val errorShareDialogController = ErrorDialogController {
+        it.hideDialog()
+    }
+    val infoDialogController = InfoDialogController(message = "Расписание скопировано в буфер обмена!")
+
     messageNotSchedule = "На ${when(scheduleType) {
         ScheduleType.Today -> "сегодня"
         ScheduleType.NextDay -> "следующий ближайший день"
@@ -72,9 +74,28 @@ fun ScheduleViewerScreen(
     )
 
     val scope = rememberCoroutineScope()
+    val scroll = rememberScrollState()
 
+    ErrorDialog(errorShareDialogController)
+    InfoDialog(infoDialogController)
     LoadingDialog(loadingDialogController)
     ErrorDialog(errorDialogController)
+
+    LaunchedEffect(Unit) {
+        date = DateTime.getCurrentMillis()
+        scheduleList = emptyList()
+        loadingDialogController.showDialog()
+        loadSchedule(
+            coroutineScope = scope,
+            filterType = filterType,
+            scheduleType = scheduleType,
+            filterData = if (filterType == FilterType.Group) {
+                SettingsData.selectedGroup!!
+            } else {
+                SettingsData.selectedTeacher!!
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -122,6 +143,28 @@ fun ScheduleViewerScreen(
                 }
             }
         },
+        floatingActionButton = {
+            if (scheduleList.isNotEmpty()) {
+                ShareFloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            val bitmap = screenshotController.captureAsync().await()
+                            shareManager.shareImage(bitmap).let { result ->
+                                if (!currentPlatform().type.isMobile) {
+                                    result
+                                        .onSuccess {
+                                            infoDialogController.showDialog()
+                                        }
+                                        .onFailure { error ->
+                                            errorShareDialogController.showDialog(error.message ?: "Произошла ошибка при копировании!")
+                                        }
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        },
         bottomBar = {
             AdManager.AdBannerScheduleScreen(
                 modifier = Modifier
@@ -138,34 +181,20 @@ fun ScheduleViewerScreen(
                     .padding(paddings),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                LaunchedEffect(Unit) {
-                    date = DateTime.getCurrentMillis()
-                    scheduleList = emptyList()
-                    loadingDialogController.showDialog()
-                    loadSchedule(
-                        coroutineScope = scope,
-                        filterType = filterType,
-                        scheduleType = scheduleType,
-                        filterData = if (filterType == FilterType.Group) {
-                            SettingsData.selectedGroup!!
-                        } else {
-                            SettingsData.selectedTeacher!!
-                        }
-                    )
-                }
-
                 if (scheduleList.isNotEmpty()) {
                     val dayOfWeek = DateTime.getDayOfWeek(date)
 
                     val scheduleCalls = ScheduleApi.getScheduleCalls(dayOfWeek)
                     val isMonday = dayOfWeek == DayOfWeek.MONDAY
 
-                    LazyColumn(
+                    Column(
                         modifier = modifier
                             .padding(8.dp, 0.dp)
                             .weight(1f)
+                            .verticalScroll(scroll)
+                            .capturable(screenshotController)
                     ) {
-                        items(scheduleList) { schedule ->
+                        scheduleList.forEach { schedule ->
                             Spacer(modifier = modifier.height(8.dp))
                             ScheduleItem(
                                 modifier = modifier.widthIn(max = 500.dp),
