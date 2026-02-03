@@ -9,7 +9,7 @@ import com.pomidorka.scheduleaag.ui.Green
 fun ErrorDialog(errorDialogController: ErrorDialogController) {
     if (errorDialogController.isVisible) {
         AlertDialog(
-            title = { Text(errorDialogController.title) },
+            title = errorDialogController.title?.let { { Text(it) } },
             text = { Text(errorDialogController.message) },
             onDismissRequest = { },
             confirmButton = {

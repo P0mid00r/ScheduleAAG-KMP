@@ -39,7 +39,6 @@ import com.pomidorka.scheduleaag.ui.components.alertdialogs.*
 import com.pomidorka.scheduleaag.ui.navigation.Route
 import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.getVibrator
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -360,7 +359,7 @@ private fun BottomButtonsBar(
 ) {
     var isShowInfoDialog by rememberSaveable { mutableStateOf(false) }
 
-    InfoDialog(
+    AboutAppDialog(
         visible = isShowInfoDialog,
         onBackClick = { isShowInfoDialog = false }
     )

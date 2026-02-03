@@ -8,7 +8,7 @@ abstract class DialogControllerBase<T : DialogControllerBase<T>> {
     var isVisible by mutableStateOf(false)
         protected set
 
-    var title by mutableStateOf("")
+    var title by mutableStateOf<String?>(null)
         protected set
 
     var message by mutableStateOf("")
@@ -22,7 +22,7 @@ abstract class DialogControllerBase<T : DialogControllerBase<T>> {
 
     constructor(
         isVisible: Boolean,
-        title: String,
+        title: String?,
         message: String,
         onConfirm: ((T) -> Unit)? = null,
         onDismiss: ((T) -> Unit)? = null
