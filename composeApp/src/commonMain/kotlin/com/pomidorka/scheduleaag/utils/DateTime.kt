@@ -51,7 +51,6 @@ object DateTime {
         DayOfWeek.SUNDAY -> "ВС"
     }
 
-    @OptIn(ExperimentalTime::class)
     fun getCurrentMillis() = Clock.System.now().toEpochMilliseconds()
 
     fun Long.getDayNameInRussian(
@@ -106,22 +105,20 @@ object DateTime {
         return "$day.$month.$year"
     }
 
-    // TODO: Отрефакторить
     fun Long.convertMillisToDateTimeRu(tz: TimeZone = TimeZone.currentSystemDefault()): String {
         val localDate = getInstant(this).toLocalDateTime(tz)
-        val date = localDate.date.let {
-            val day = it.day.toString().padStart(2, '0')
-            val month = it.month.number.toString().padStart(2, '0')
-            val year = it.year
+        val date = localDate.date.run {
+            val day = day.toString().padStart(2, '0')
+            val month = month.number.toString().padStart(2, '0')
 
             "$day.$month.$year"
         }
 
-        val time = localDate.time.let {
-            val hours = it.hour.toString().padStart(2, '0')
-            val minutes = it.minute.toString().padStart(2, '0')
-            val seconds = it.second.toString().padStart(2, '0')
-            val milliseconds = it.nanosecond / NANOS_PER_MILLI
+        val time = localDate.time.run {
+            val hours = hour.toString().padStart(2, '0')
+            val minutes = minute.toString().padStart(2, '0')
+            val seconds = second.toString().padStart(2, '0')
+            val milliseconds = nanosecond / NANOS_PER_MILLI
 
             "$hours:$minutes:$seconds:$milliseconds"
         }
