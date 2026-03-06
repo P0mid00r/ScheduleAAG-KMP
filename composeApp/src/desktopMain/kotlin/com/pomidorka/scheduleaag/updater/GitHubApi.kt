@@ -11,6 +11,9 @@ class GitHubApi(private val httpClient: HttpClient) {
 
     private val urlApiLatestReleases = "$API_URL/repos/$USER_NAME/$REPO_NAME/releases/latest"
 
+    private val HttpStatusCode.isOk
+        get() = this == HttpStatusCode.OK
+
     suspend fun loadReleases(): ReleasesData? {
         val response = httpClient.get(urlApiLatestReleases) {
             headers {
@@ -18,12 +21,10 @@ class GitHubApi(private val httpClient: HttpClient) {
             }
         }
 
-        return if (response.status.isOk()) {
+        return if (response.status.isOk) {
             response.body<ReleasesData>()
         } else null
     }
-
-    private fun HttpStatusCode.isOk() = this == HttpStatusCode.OK
 
     private companion object {
         const val API_URL = "https://api.github.com"
