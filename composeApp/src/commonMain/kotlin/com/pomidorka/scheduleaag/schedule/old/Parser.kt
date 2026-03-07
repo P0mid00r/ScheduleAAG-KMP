@@ -6,8 +6,10 @@ import com.fleeksoft.ksoup.nodes.Document
 import com.fleeksoft.ksoup.select.Elements
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.schedule.Result
+import com.pomidorka.scheduleaag.utils.DateTime
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.plus
@@ -16,7 +18,6 @@ import kotlinx.datetime.yearMonth
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-//TODO: Сделать получение ссылки на pdf расписания вместе с датой
 @OptIn(ExperimentalTime::class)
 sealed class Parser {
     suspend fun parseAllMonthHtml(url: String): Result<String> {
@@ -107,3 +108,75 @@ sealed class Parser {
 
     private fun Document.parseTables() = this.getElementsByTag("tbody")
 }
+
+class ScheduleTableParser {
+    suspend fun getScheduleTables(collegeBuilding: CollegeBuilding)
+        = getScheduleTables("https://altag.ru/student/schedule/rescheduling-${collegeBuilding.id}")
+
+    suspend fun getScheduleTables(url: String): Result<List<ScheduleMonth>> {
+        return try{
+            val container = loadDocument(url).parseContainer()
+            val tables = container.parseScheduleTables()
+            Result.Success(tables)
+        } catch (_: Exception) {
+            Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
+
+    private suspend fun loadDocument(url: String) = Ksoup.parseGetRequest(url)
+
+    private fun Document.parseContainer() = this.getElementsByClass("mtext")
+
+    private fun Elements.parseScheduleTables(): List<ScheduleMonth> {
+        val titleTable = this.select("div").apply { removeFirst() }
+        val tables = this.select("tbody")
+        val scheduleTables = mutableListOf<ScheduleMonth>()
+
+        tables.forEachIndexed { id, table ->
+            val titleAttr = titleTable[id].text().split(" - ")
+            val month = DateTime.parseMonthFromName(titleAttr.first())
+            val year = titleAttr.last().toInt()
+            val scheduleDays = mutableListOf<ScheduleDay>()
+
+            table.getElementsByTag("tr")
+                .apply { removeFirst() }
+                .forEach { row ->
+                    row.forEach { column ->
+                        column.getElementsByTag("td").forEach { cell ->
+                            if (cell.text() != "") {
+                                val day = cell.text().toInt()
+                                val url = cell.getElementsByTag("a")
+                                    .firstOrNull()
+                                    ?.attribute("href")
+                                    ?.value
+
+                                scheduleDays.add(
+                                    ScheduleDay(
+                                        date = LocalDate(year, month, day),
+                                        url = url
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+            scheduleTables.add(ScheduleMonth(
+                month = month,
+                scheduleDays = scheduleDays
+            ))
+        }
+
+        return scheduleTables
+    }
+}
+
+data class ScheduleMonth(
+    val month: Month,
+    val scheduleDays: List<ScheduleDay>,
+)
+
+data class ScheduleDay(
+    val date: LocalDate,
+    val url: String?,
+)

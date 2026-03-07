@@ -16,6 +16,22 @@ import kotlin.time.Instant
 object DateTime {
     private const val NANOS_PER_MILLI = 1_000_000
 
+    fun parseMonthFromName(monthName: String) = when(monthName) {
+        "Январь" -> Month.JANUARY
+        "Февраль" -> Month.FEBRUARY
+        "Март" -> Month.MARCH
+        "Апрель" -> Month.APRIL
+        "Май" -> Month.MAY
+        "Июнь" -> Month.JUNE
+        "Июль" -> Month.JULY
+        "Август" -> Month.AUGUST
+        "Сентябрь" -> Month.SEPTEMBER
+        "Октябрь" -> Month.OCTOBER
+        "Ноябрь" -> Month.NOVEMBER
+        "Декабрь" -> Month.DECEMBER
+        else -> throw IllegalArgumentException()
+    }
+
     fun Month.getMonthName() = when(this) {
         Month.JANUARY -> "Январь"
         Month.FEBRUARY -> "Февраль"
