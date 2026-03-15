@@ -1,4 +1,4 @@
-package com.pomidorka.scheduleaag.updater
+package com.pomidorka.scheduleaag.updater.github
 
 import kotlinx.serialization.Serializable
 

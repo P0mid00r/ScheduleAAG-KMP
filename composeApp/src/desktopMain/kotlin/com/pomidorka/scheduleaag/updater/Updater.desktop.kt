@@ -1,6 +1,9 @@
 package com.pomidorka.scheduleaag.updater
 
 import AppConfig.APP_NAME
+import com.pomidorka.scheduleaag.updater.github.Asset
+import com.pomidorka.scheduleaag.updater.github.GitHubApi
+import com.pomidorka.scheduleaag.updater.github.ReleasesData
 import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.createHttpClient
 import com.pomidorka.scheduleaag.utils.openUrl

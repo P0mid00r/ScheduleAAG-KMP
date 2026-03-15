@@ -1,9 +1,9 @@
-package com.pomidorka.scheduleaag.updater
+package com.pomidorka.scheduleaag.updater.github
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Author(
+data class Uploader(
     val avatar_url: String,
     val events_url: String,
     val followers_url: String,

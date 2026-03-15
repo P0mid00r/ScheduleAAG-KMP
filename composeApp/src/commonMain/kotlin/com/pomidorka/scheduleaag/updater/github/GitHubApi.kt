@@ -1,4 +1,4 @@
-package com.pomidorka.scheduleaag.updater
+package com.pomidorka.scheduleaag.updater.github
 
 import io.ktor.client.*
 import io.ktor.client.call.*
