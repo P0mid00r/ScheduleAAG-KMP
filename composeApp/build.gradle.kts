@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     id("ru.ok.tracer") version("1.1.6")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.21"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.10"
 }
 
 val localPropertiesFile = project.rootProject.file("local.properties")
