@@ -13,8 +13,8 @@
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/P0mid00r/ScheduleAAG-KMP?label=Версия)](https://github.com/P0mid00r/ScheduleAAG-KMP/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/P0mid00r/ScheduleAAG-KMP/total?label=Загрузки)](https://github.com/P0mid00r/ScheduleAAG-KMP/releases)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.2.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-v1.9.3-blue)](https://developer.android.com/jetpack/compose)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.3.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-v1.10.2-blue)](https://developer.android.com/jetpack/compose)
 ![License](https://img.shields.io/github/license/P0mid00r/ScheduleAAG-KMP?label=Лицензия)
 ![badge-Android](https://img.shields.io/badge/Platform-Android-green)
 ![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
