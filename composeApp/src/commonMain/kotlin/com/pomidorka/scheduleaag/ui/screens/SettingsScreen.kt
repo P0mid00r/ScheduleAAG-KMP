@@ -65,7 +65,7 @@ fun SettingsScreen(
                             SettingsData.selectedTeacher = it
                         }
 
-                        FilterType.Aud -> TODO()
+                        FilterType.Aud -> throw NotImplementedError()
                     }
                 }
             )
@@ -305,7 +305,7 @@ private fun NewItemSetting(onFilterClick: (FilterType) -> Unit) {
                 }
             }
 
-            FilterType.Aud -> TODO()
+            FilterType.Aud -> throw NotImplementedError()
         }
     }
 }
