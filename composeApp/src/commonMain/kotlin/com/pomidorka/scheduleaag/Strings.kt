@@ -27,7 +27,7 @@ object Strings {
             <b>Дизайнер логотипа:</b>
             <p>Виктория Роганова: <a href='https://t.me/viktori_rar' target=\\\"_blank\\\">viktori_rar</a></p>
             <br>
-            <p>Телеграмм канал: <a href='https://t.me/scheduleaag' target=\\\"_blank\\\">ScheduleAAG</a></p>
+            <p>Новости обновлений: <a href='https://t.me/scheduleaag' target=\\\"_blank\\\">ScheduleAAG</a></p>
         </body>
     """
 
