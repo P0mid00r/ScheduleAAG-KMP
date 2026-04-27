@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavHostController
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.data.SettingsData
 import com.pomidorka.scheduleaag.schedule.Result
@@ -47,8 +46,8 @@ import kotlinx.datetime.DayOfWeek
 @Composable
 fun ScheduleInteractive(
     modifier: Modifier = Modifier,
-    screenshotController: ScreenshotController,
-    navController: NavHostController
+    screenshotController: ScreenshotController?,
+    onBack: (() -> Unit)? = null,
 ) {
     val loadingDialogController = LoadingDialogController(
         message = Strings.PROGRESS_DIALOG_SCHEDULE
@@ -59,7 +58,7 @@ fun ScheduleInteractive(
     val fatalErrorDialogController = ErrorDialogController(
         onConfirm = {
             it.hideDialog()
-            navController.popBackStack()
+            onBack?.invoke()
         }
     )
 
@@ -159,7 +158,10 @@ fun ScheduleInteractive(
             .fillMaxWidth()
             .padding(12.dp, 0.dp)
             .verticalScroll(scrollState)
-            .capturable(screenshotController),
+            .let { modifier ->
+                if (screenshotController == null) modifier
+                else modifier.capturable(screenshotController)
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

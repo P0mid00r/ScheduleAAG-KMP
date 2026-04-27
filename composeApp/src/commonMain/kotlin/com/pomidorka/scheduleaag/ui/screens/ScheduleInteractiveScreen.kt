@@ -88,7 +88,7 @@ fun ScheduleInteractiveScreen(
                     .padding(paddings)
                     .align(Alignment.Center),
                 screenshotController = screenshotController,
-                navController = navController,
+                onBack = navController::popBackStack,
             )
         }
     }
