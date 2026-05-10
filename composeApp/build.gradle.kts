@@ -11,8 +11,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("ru.ok.tracer") version("1.1.6")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.10"
+    id("ru.ok.tracer") version("1.3.0")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
 }
 
 val localPropertiesFile = project.rootProject.file("local.properties")
@@ -134,11 +134,11 @@ kotlin {
             implementation("com.github.bhuvaneshw.pdfviewer:compose:1.1.0")
             implementation("com.github.bhuvaneshw.pdfviewer:compose-ui:1.1.0")
 
-            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.1.6"))
+            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.3.0"))
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
-            implementation("com.yandex.android:mobileads:7.17.0")
+            implementation("com.yandex.android:mobileads:7.18.5")
 
             implementation(libs.ktor.client.android)
             implementation(compose.preview)
