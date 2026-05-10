@@ -22,18 +22,17 @@ import com.pomidorka.scheduleaag.ad.AdManager
 import com.pomidorka.scheduleaag.schedule.Result
 import com.pomidorka.scheduleaag.schedule.old.CollegeBuilding
 import com.pomidorka.scheduleaag.schedule.old.ScheduleApi
-import com.pomidorka.scheduleaag.utils.currentPlatform
 import com.pomidorka.scheduleaag.ui.Green
 import com.pomidorka.scheduleaag.ui.components.BackgroundCells
-import com.pomidorka.scheduleaag.ui.components.NavigationBar
 import com.pomidorka.scheduleaag.ui.components.CustomWebView
+import com.pomidorka.scheduleaag.ui.components.NavigationBar
 import com.pomidorka.scheduleaag.ui.components.TopAppBar
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialogController
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
 import com.pomidorka.scheduleaag.ui.navigation.Route
-import kotlinx.coroutines.async
+import com.pomidorka.scheduleaag.utils.currentPlatform
 import kotlinx.coroutines.launch
 
 @Composable
@@ -41,6 +40,7 @@ fun ScheduleDaysSelectorScreen(
     navController: NavHostController,
     collegeBuilding: CollegeBuilding
 ) {
+    val platform = currentPlatform()
     val scope = rememberCoroutineScope()
     var html: String? by rememberSaveable { mutableStateOf(null) }
     val webViewState = html?.let {
@@ -55,7 +55,7 @@ fun ScheduleDaysSelectorScreen(
     }
 
     val webViewNavigator = rememberWebViewNavigator(
-        requestInterceptor = if (currentPlatform().type.isMobile) {
+        requestInterceptor = if (platform.type.isMobile || platform.type.isWeb) {
             object : RequestInterceptor {
                 override fun onInterceptUrlRequest(
                     request: WebRequest,
