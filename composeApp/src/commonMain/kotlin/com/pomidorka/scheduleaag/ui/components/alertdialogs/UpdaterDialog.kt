@@ -35,7 +35,8 @@ private fun UpdaterDialogPreview() {
                     "- Отображение оповещения если сервер не отвечает.\n" +
                     "- Улучшение производительности.\n" +
                     "- Улучшение стабильности системы.",
-            onUpdateClick = {}
+            onUpdateClick = {},
+            onCancelClick = {},
         )
     }
 }
@@ -46,6 +47,7 @@ fun UpdaterDialog(
     versionName: String,
     whatsNew: String,
     onUpdateClick: () -> Unit,
+    onCancelClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val vibrator = getVibrator()
@@ -99,6 +101,19 @@ fun UpdaterDialog(
                     ) {
                         Text(
                             text = "СКАЧАТЬ ОБНОВЛЕНИЕ",
+                            color = Brown,
+                        )
+                    }
+
+                    TextButton(
+                        onClick = {
+                            onCancelClick()
+                            vibrator.vibrateClick()
+                        },
+                        modifier = modifier.align(Alignment.End),
+                    ) {
+                        Text(
+                            text = "ПОЗЖЕ",
                             color = Brown,
                         )
                     }

@@ -76,7 +76,10 @@ fun App() {
             whatsNew = it.whatsNew,
             onUpdateClick = {
                 it.update(updaterListener)
-            }
+            },
+            onCancelClick = {
+                updates = null
+            },
         )
     }
 
