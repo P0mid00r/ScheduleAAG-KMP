@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("ru.ok.tracer") version("1.3.0")
+    id("ru.ok.tracer") version "1.3.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
 }
 
@@ -153,6 +153,8 @@ kotlin {
             kotlin.srcDir(generatedAppConfigDir)
 
             dependencies {
+                implementation("io.github.kdroidfilter:composewebview:1.0.0-beta-02")
+
                 api("io.github.kevinnzou:compose-webview-multiplatform:2.0.3")
 
                 implementation("com.kizitonwose.calendar:compose-multiplatform:2.9.0")
@@ -189,7 +191,6 @@ kotlin {
         }
 
         desktopMain.dependencies {
-            implementation("io.github.kevinnzou:compose-webview-multiplatform-desktop:2.0.3")
             implementation(libs.ktor.client.okhttp)
             implementation("org.slf4j:slf4j-simple:2.0.13")
             implementation(compose.desktop.currentOs)
@@ -300,17 +301,7 @@ compose.desktop {
             obfuscate.set(true)
             configurationFiles.from("compose-desktop.pro")
         }
-        jvmArgs += listOf(
-            "--add-exports=java.desktop/sun.awt=ALL-UNNAMED",
-            "--add-exports=java.desktop/sun.awt.X11=ALL-UNNAMED",
-            "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
-            "--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED",
-            "--add-opens=java.desktop/java.awt.peer=ALL-UNNAMED",
-        )
 
-        if (System.getProperty("os.name").contains("Mac")) {
-            jvmArgs("--add-opens", "java.desktop/sun.lwawt=ALL-UNNAMED")
-            jvmArgs("--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED")
-        }
+        jvmArgs += "--enable-native-access=ALL-UNNAMED"
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.ad.AdManager
@@ -121,21 +122,16 @@ fun CallsScreen(navController: NavHostController) {
             }
         }
 
-        Box(
-            Modifier
-                .padding(paddings)
-                .fillMaxSize()
-        ) {
-            BackgroundCells(Modifier.fillMaxSize()) {
-                webViewState?.let { state ->
-                    CustomWebView(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Transparent),
-                        state = state,
-                        captureBackPresses = false
-                    )
-                }
+        BackgroundCells(Modifier.fillMaxSize()) {
+            webViewState?.let { state ->
+                CustomWebView(
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .background(Color.Transparent),
+                    state = state,
+                    captureBackPresses = false
+                )
             }
         }
     }

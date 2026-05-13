@@ -40,7 +40,6 @@ fun ScheduleDaysSelectorScreen(
     navController: NavHostController,
     collegeBuilding: CollegeBuilding
 ) {
-    val platform = currentPlatform()
     val scope = rememberCoroutineScope()
     var html: String? by rememberSaveable { mutableStateOf(null) }
     val webViewState = html?.let {
@@ -55,7 +54,7 @@ fun ScheduleDaysSelectorScreen(
     }
 
     val webViewNavigator = rememberWebViewNavigator(
-        requestInterceptor = if (platform.type.isMobile || platform.type.isWeb) {
+        requestInterceptor =
             object : RequestInterceptor {
                 override fun onInterceptUrlRequest(
                     request: WebRequest,
@@ -64,13 +63,14 @@ fun ScheduleDaysSelectorScreen(
                     if (request.url.contains("about:blank")) {
                         return WebRequestInterceptResult.Allow
                     } else {
-                        navController.navigate(Route.SchedulePdfViewerScreen(request.url))
+                        scope.launch {
+                            navController.navigate(Route.SchedulePdfViewerScreen(request.url))
+                        }
 
                         return WebRequestInterceptResult.Reject
                     }
                 }
-            }
-        } else null,
+        }
     )
 
     val loadingDialogController = LoadingDialogController(
@@ -127,22 +127,17 @@ fun ScheduleDaysSelectorScreen(
             }
         }
 
-        Box(
-            Modifier
-                .padding(paddings)
-                .fillMaxSize(),
-        ) {
-            BackgroundCells(Modifier.fillMaxSize()) {
-                webViewState?.let { state ->
-                    CustomWebView(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Transparent),
-                        state = state,
-                        captureBackPresses = false,
-                        navigator = webViewNavigator,
-                    )
-                }
+        BackgroundCells(Modifier.fillMaxSize()) {
+            webViewState?.let { state ->
+                CustomWebView(
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .background(Color.Transparent),
+                    state = state,
+                    captureBackPresses = false,
+                    navigator = webViewNavigator,
+                )
             }
         }
     }

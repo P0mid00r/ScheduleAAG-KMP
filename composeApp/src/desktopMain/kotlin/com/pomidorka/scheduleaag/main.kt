@@ -1,6 +1,5 @@
 package com.pomidorka.scheduleaag
 
-import AppConfig
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,31 +7,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.pomidorka.scheduleaag.ui.Green
 import com.pomidorka.scheduleaag.utils.Log
-import dev.datlag.kcef.KCEF
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.skiko.hostArch
 import org.jetbrains.skiko.hostOs
 import scheduleaag.composeapp.generated.resources.Res
 import scheduleaag.composeapp.generated.resources.new_logo_vika
-import java.io.File
-import kotlin.math.max
 
 private fun getAppDataDirectory(
     appName: String,
@@ -66,46 +60,13 @@ fun main() {
             resizable = true,
             onCloseRequest = ::exitApplication,
         ) {
-            val bundlePath = File(getAppDataDirectory(AppConfig.APP_NAME, "kcef-bundle"))
-            val cachePath = File(getAppDataDirectory(AppConfig.APP_NAME, "cache"))
-
-            var restartRequired by remember { mutableStateOf(false) }
-            var initialized by remember { mutableStateOf(false) }
-            var downloading by remember { mutableStateOf(0F) }
-
-            LaunchedEffect(Unit) {
-                if (isRelease) {
-                    withContext(Dispatchers.IO) {
-                        KCEF.init(
-                            builder = {
-                                installDir(bundlePath)
-                                progress {
-                                    onDownloading {
-                                        downloading = max(it, 0F)
-                                    }
-                                    onInitialized {
-                                        initialized = true
-                                    }
-                                }
-                                settings {
-                                    this.cachePath = cachePath.absolutePath
-                                }
-                            },
-                            onError = {
-                                it?.let { throwable ->
-                                    Log.error("Main.kt", throwable)
-                                    throwable.printStackTrace()
-                                }
-                            },
-                            onRestartRequired = {
-                                restartRequired = true
-                            }
-                        )
-                    }
-                } else initialized = true
+            val scope = rememberCoroutineScope()
+            var splashLoaded by remember { mutableStateOf(false) }
+            timer(scope, 1) {
+                splashLoaded = true
             }
 
-            if (initialized) {
+            if (splashLoaded) {
                 App()
             } else {
                 Box(Modifier.fillMaxSize().background(Green)) {
@@ -122,37 +83,18 @@ fun main() {
                             painter = painterResource(Res.drawable.new_logo_vika),
                             contentDescription = null,
                         )
-
-                        if (restartRequired) {
-                            Text(
-                                fontSize = 20.sp,
-                                color = Color.White,
-                                text = "Перезапустите приложение",
-                            )
-                        } else {
-                            if (downloading > 0) {
-                                Text(
-                                    fontSize = 20.sp,
-                                    color = Color.White,
-                                    text = if (downloading == 100f) {
-                                        "Запуск приложения..."
-                                    } else {
-                                        "Загрузка файлов: ${String.format("%.2f", downloading)}%"
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (isRelease) {
-                DisposableEffect(Unit) {
-                    onDispose {
-                        KCEF.disposeBlocking()
                     }
                 }
             }
         }
+    }
+}
+
+fun timer(scope: CoroutineScope, seconds: Int, onComplete: () -> Unit) {
+    scope.launch {
+        for (i in 1..seconds) {
+            delay(1000L)
+        }
+        onComplete()
     }
 }
