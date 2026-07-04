@@ -13,8 +13,8 @@
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/P0mid00r/ScheduleAAG-KMP?label=Версия)](https://github.com/P0mid00r/ScheduleAAG-KMP/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/P0mid00r/ScheduleAAG-KMP/total?label=Загрузки)](https://github.com/P0mid00r/ScheduleAAG-KMP/releases)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.3.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-v1.10.2-blue)](https://developer.android.com/jetpack/compose)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.4.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-v1.11.1-blue)](https://developer.android.com/jetpack/compose)
 ![License](https://img.shields.io/github/license/P0mid00r/ScheduleAAG-KMP?label=Лицензия)
 ![badge-Android](https://img.shields.io/badge/Platform-Android-green)
 ![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
@@ -25,10 +25,10 @@
 | Платформа                                                               | Минимальная версия                              |
 |-------------------------------------------------------------------------|-------------------------------------------------|
 | [Web](https://p0mid00r.github.io/)                                      | Браузеры с поддержкой WasmGC (Safari iOS 18.2+) |
-| [Android](https://www.rustore.ru/catalog/app/com.pomidorka.scheduleaag) | Android 8.0+                                    |
-| iOS                                                                     | iOS 13+                                         |
+| [Android](https://www.rustore.ru/catalog/app/com.pomidorka.scheduleaag) | Android 8.0                                     |
+| iOS                                                                     | iOS 15                                          |
 | Windows                                                                 | Windows 10,11 (x86-64, arm64)                   |
-| Mac                                                                     | macOS 12 x64, macOS 13 arm64                    |
+| Mac                                                                     | macOS 13 arm64                    |
 | Linux                                                                   | Ubuntu 20.04 (x86-64, arm64)                    |
 
 Это мультиплатформенный Kotlin проект, ориентированный на Android, iOS, Desktop, Web.

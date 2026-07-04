@@ -11,8 +11,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("ru.ok.tracer") version "1.3.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
+    id("ru.ok.tracer") version "1.3.4"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.0"
 }
 
 val localPropertiesFile = project.rootProject.file("local.properties")
@@ -95,7 +95,7 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
+//        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -134,14 +134,14 @@ kotlin {
             implementation("com.github.bhuvaneshw.pdfviewer:compose:1.1.0")
             implementation("com.github.bhuvaneshw.pdfviewer:compose-ui:1.1.0")
 
-            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.3.0"))
+            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.3.4"))
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
             implementation("com.yandex.android:mobileads:7.18.5")
 
             implementation(libs.ktor.client.android)
-            implementation(compose.preview)
+            implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
         }
 
@@ -174,14 +174,13 @@ kotlin {
 
                 implementation(libs.navigation.compose)
                 implementation(libs.material.icons.extended)
-                implementation(libs.material3)
 
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.uiToolingPreview)
                 implementation(libs.androidx.lifecycle.viewmodel)
                 implementation(libs.androidx.lifecycle.runtimeCompose)
             }
@@ -260,7 +259,7 @@ android {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.uiToolingPreview)
 }
 
 compose.desktop {
