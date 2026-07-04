@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.viewinterop.WebElementView
+import androidx.compose.ui.viewinterop.HtmlElementView
 import com.multiplatform.webview.jsbridge.WebViewJsBridge
 import com.multiplatform.webview.request.WebRequest
 import com.multiplatform.webview.web.PlatformWebViewParams
@@ -69,7 +69,7 @@ actual fun CustomWebView(
         }
     }
 
-    WebElementView(
+    HtmlElementView(
         factory = {
             (document.createElement("iframe")
                     as HTMLIFrameElement).apply {

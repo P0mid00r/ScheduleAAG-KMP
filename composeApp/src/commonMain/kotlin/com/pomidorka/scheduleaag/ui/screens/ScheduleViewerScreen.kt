@@ -116,7 +116,7 @@ fun ScheduleViewerScreen(
                 TopAppBar(
                     title = "Расписание ${when(filterType) {
                         FilterType.Group -> SettingsData.selectedGroup?.data
-                        FilterType.Prep -> ScheduleInteractiveApi.trimNameTeacher(SettingsData.selectedTeacher?.data!!)
+                        FilterType.Prep -> ScheduleInteractiveApi.trimTeacherName(SettingsData.selectedTeacher?.data!!)
                         FilterType.Aud -> throw NotImplementedError()
                     }}",
                     onBackClick = {

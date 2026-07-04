@@ -296,7 +296,7 @@ private fun NewItemSetting(onFilterClick: (FilterType) -> Unit) {
                             text = if (SettingsData.selectedTeacher == null) {
                                 "Выбрать фио"
                             } else {
-                                ScheduleInteractiveApi.trimNameTeacher(SettingsData.selectedTeacher!!.data)
+                                ScheduleInteractiveApi.trimTeacherName(SettingsData.selectedTeacher!!.data)
                             },
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis

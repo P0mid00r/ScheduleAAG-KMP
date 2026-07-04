@@ -219,8 +219,8 @@ object ScheduleInteractiveApi {
             val numberLesson = element.select("div.time").text().toInt()
             val group = element.select("div.group").text()
             val lesson = element.select("div.lesson").text()
-            val teacher = trimNameTeacher(element.select("div.teacher").text())
-            val territory = element.select("div.territory").text()
+            val teacher = trimTeacherName(element.select("div.teacher").text())
+            val territory = trimTerritoryName(element.select("div.territory").text())
             val classRoom = element.select("div.classroom").text()
 
             val key = numberLesson to lesson // Ключ: номер пары + дисциплина
@@ -262,14 +262,26 @@ object ScheduleInteractiveApi {
         }
     }
 
-    fun trimNameTeacher(fullName: String): String {
+    fun trimTerritoryName(territoryName: String): String {
+        val trimName = when (territoryName.trim()) {
+            "УЧЕБНЫЙ КОРПУС № 1 ул. ЮРИНА, 170" -> "Учебный корпус №1"
+            "УЧЕБНЫЙ КОРПУС № 2 ул. ЮРИНА, 203" -> "Учебный корпус №2"
+            "УЧЕБНЫЙ КОРПУС № 3 ул. Г. ТИТОВА, 8" -> "Учебный корпус №3"
+            "Филиал в г. Белокуриха, ул. Партизанская, 3" -> "Филиал в г. Белокуриха"
+            else -> territoryName
+        }
+
+        return trimName
+    }
+
+    fun trimTeacherName(fullName: String): String {
         val items = fullName.trim().split(" ")
 
         return when {
             items.size == 3 -> "${items[0]} ${items[1][0]}.${items[2][0]}."
             items.size in 1..2 -> fullName
             items.size > 3 -> "${items[0]} ${items[1][0]}.${items[2][0]}."
-            else -> ""
+            else -> fullName
         }
     }
 }

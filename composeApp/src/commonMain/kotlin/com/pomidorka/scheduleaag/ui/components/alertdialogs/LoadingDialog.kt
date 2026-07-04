@@ -17,13 +17,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.pomidorka.scheduleaag.ui.Brown
 import com.pomidorka.scheduleaag.ui.Green
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
