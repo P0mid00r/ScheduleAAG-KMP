@@ -1,5 +1,6 @@
 package com.pomidorka.scheduleaag.ui.components
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -17,7 +18,8 @@ import com.pomidorka.scheduleaag.utils.getVibrator
 @Composable
 fun TopAppBar(
     title: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = {
@@ -27,6 +29,7 @@ fun TopAppBar(
                 overflow = TextOverflow.Ellipsis
             )
         },
+        actions = actions,
         onBackClick = onBackClick
     )
 }
@@ -35,7 +38,8 @@ fun TopAppBar(
 @Composable
 fun TopAppBar(
     title: @Composable () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     val vibrator = getVibrator()
     var isNavigating by remember { mutableStateOf(false) }
@@ -53,6 +57,7 @@ fun TopAppBar(
             containerColor = Green,
             titleContentColor = Color.White
         ),
+        actions = actions,
         navigationIcon = {
             IconButton(
                 onClick = {
