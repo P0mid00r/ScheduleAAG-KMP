@@ -30,7 +30,7 @@ actual object AdManager {
 
     private fun init() {
         val appOpenAdLoader = AppOpenAdLoader(activity)
-        val adRequestConfiguration = AdRequestConfiguration.Builder(Ids.APP_OPEN_AD).build()
+        val adRequestConfiguration = AdRequest.Builder(Ids.APP_OPEN_AD).build()
 
         val appOpenAdLoadListener: AppOpenAdLoadListener = object : AppOpenAdLoadListener {
             override fun onAdLoaded(appOpenAd: AppOpenAd) {
@@ -55,8 +55,7 @@ actual object AdManager {
         }
 
         mAppOpenAd?.setAdEventListener(appOpenAdEventListener)
-        appOpenAdLoader.setAdLoadListener(appOpenAdLoadListener)
-        appOpenAdLoader.loadAd(adRequestConfiguration)
+        appOpenAdLoader.loadAd(adRequestConfiguration, appOpenAdLoadListener)
     }
 
     actual fun showOpenAppAd() {
@@ -121,9 +120,8 @@ actual object AdManager {
                 .background(color),
             factory = {
                 val banner = BannerAdView(it).apply {
-                    setAdUnitId(id)
-                    setAdSize(BannerAdSize.inlineSize(context, widthBanner, 85))
-                    val adRequest: AdRequest = AdRequest.Builder().build()
+                    setAdSize(BannerAdSize.inline(context, widthBanner, 85))
+                    val adRequest: AdRequest = AdRequest.Builder(id).build()
                     loadAd(adRequest)
                 }
                 adBannerContext.invoke(banner)

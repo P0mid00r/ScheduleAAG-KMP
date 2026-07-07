@@ -138,7 +138,7 @@ kotlin {
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
-            implementation("com.yandex.android:mobileads:7.18.5")
+            implementation("com.yandex.android:mobileads:8.1.0")
 
             implementation(libs.ktor.client.android)
             implementation(libs.compose.uiToolingPreview)
