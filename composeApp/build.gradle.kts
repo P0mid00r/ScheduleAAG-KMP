@@ -209,8 +209,8 @@ kotlin {
 
 tracer {
     create("defaultConfig") {
-        pluginToken = localProperties.getProperty("tracerPluginToken")
-        appToken = localProperties.getProperty("tracerAppToken")
+        pluginToken = localProperties.getProperty("tracerPluginToken") ?: ""
+        appToken = localProperties.getProperty("tracerAppToken") ?: ""
     }
 
     create("debug") {
