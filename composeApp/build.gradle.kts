@@ -17,7 +17,9 @@ plugins {
 
 val localPropertiesFile = project.rootProject.file("local.properties")
 val localProperties = Properties().apply {
-    load(localPropertiesFile.inputStream())
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
 }
 
 val generatedAppConfigDir = layout.buildDirectory.dir("generated/config").get().asFile
