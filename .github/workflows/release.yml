@@ -19,7 +19,7 @@ jobs:
 #        uses: ./.github/actions/gradle-setup
 
       - name: Build macOS DMG
-        run: ./gradlew :desktopApp:packageDmg --refresh-dependencies
+        run: ./gradlew :composeApp:packageDmg
 
       - name: Upload macOS DMG
         uses: actions/upload-artifact@v4
