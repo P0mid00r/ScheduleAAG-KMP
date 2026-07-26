@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.multiplatform.webview.web.LoadingState
-import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.pomidorka.scheduleaag.ui.components.CustomWebView
 import com.pomidorka.scheduleaag.utils.isErrorRequest
@@ -15,6 +14,7 @@ import com.pomidorka.scheduleaag.utils.isErrorRequest
 actual fun PdfViewer(
     modifier: Modifier,
     urlPdf: String,
+    searchTextState: String,
     onLoading: () -> Unit,
     onLoaded: () -> Unit,
     onError: (Throwable) -> Unit

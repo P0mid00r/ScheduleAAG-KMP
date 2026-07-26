@@ -1,53 +1,45 @@
 package com.pomidorka.scheduleaag.ui.components.schedule
 
-import androidx.compose.foundation.background
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.multiplatform.webview.web.LoadingState
-import com.multiplatform.webview.web.WebView
-import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
-import com.pomidorka.scheduleaag.ui.components.CustomWebView
-import com.pomidorka.scheduleaag.utils.isErrorRequest
+import com.conamobile.pdfkmp.viewer.PdfSource
+import com.pomidorka.scheduleaag.utils.createHttpClient
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 
 @Composable
 actual fun PdfViewer(
     modifier: Modifier,
     urlPdf: String,
+    searchTextState: String,
     onLoading: () -> Unit,
     onLoaded: () -> Unit,
     onError: (Throwable) -> Unit
 ) {
-    val webViewState = rememberWebViewStateWithHTMLData(
-        data = getPdfViewerHtml(urlPdf),
-        mimeType = "text/html",
-    ).apply {
-        webSettings.apply {
-            backgroundColor = Color.White
-            supportZoom = false
+    val fileName = urlPdf.split("/").last()
+    var isReady by remember { mutableStateOf(false) }
+    var source by remember { mutableStateOf<PdfSource?>(null) }
+
+    LaunchedEffect(urlPdf) {
+        onLoading()
+        try {
+            val client = createHttpClient()
+            val bytes = client.get(urlPdf).readRawBytes()
+            source = PdfSource.of(bytes)
+            client.close()
+        } catch (e: Exception) {
+            onError(e)
+        } finally {
+            isReady = true
+            onLoaded()
         }
     }
 
-    LaunchedEffect(webViewState.loadingState) {
-        when (webViewState.loadingState) {
-            LoadingState.Initializing -> {}
-
-            is LoadingState.Loading -> {
-                onLoading()
-            }
-
-            LoadingState.Finished -> {
-                if (webViewState.isErrorRequest()) {
-                    onError(Throwable("Произошла ошибка при загрузке pdf"))
-                } else onLoaded()
-            }
-        }
+    source?.let {
+        com.conamobile.pdfkmp.viewer.PdfViewer(
+            source = it,
+            shareFileName = fileName,
+            modifier = Modifier,
+        )
     }
-
-    CustomWebView(
-        modifier = modifier.background(Color.Transparent),
-        state = webViewState,
-        captureBackPresses = false
-    )
 }

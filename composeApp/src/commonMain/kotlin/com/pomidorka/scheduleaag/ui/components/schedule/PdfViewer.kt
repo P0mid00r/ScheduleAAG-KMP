@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 expect fun PdfViewer(
     modifier: Modifier,
     urlPdf: String,
+    searchTextState: String,
     onLoading: () -> Unit,
     onLoaded: () -> Unit,
     onError: (Throwable) -> Unit

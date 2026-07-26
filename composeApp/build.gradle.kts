@@ -85,7 +85,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 kotlin {
-    jvmToolchain(17)
+//    jvmToolchain(17)
 
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -190,6 +190,9 @@ kotlin {
         }
 
         desktopMain.dependencies {
+            implementation("io.github.conamobiledev:pdfkmp:1.2.0")
+            implementation("io.github.conamobiledev:pdfkmp-viewer:1.2.0")
+
             implementation(libs.ktor.client.okhttp)
             implementation("org.slf4j:slf4j-simple:2.0.13")
             implementation(compose.desktop.currentOs)
