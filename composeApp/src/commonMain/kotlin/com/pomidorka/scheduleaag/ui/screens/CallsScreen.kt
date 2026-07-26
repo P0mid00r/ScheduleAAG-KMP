@@ -1,7 +1,6 @@
 package com.pomidorka.scheduleaag.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,8 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.multiplatform.webview.web.LoadingState
-import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.ad.AdManager
 import com.pomidorka.scheduleaag.schedule.Result
@@ -30,6 +27,7 @@ import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialogController
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
+import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
 import kotlinx.coroutines.launch
 
 @Composable
@@ -130,7 +128,6 @@ fun CallsScreen(navController: NavHostController) {
                         .fillMaxSize()
                         .background(Color.Transparent),
                     state = state,
-                    captureBackPresses = false
                 )
             }
         }

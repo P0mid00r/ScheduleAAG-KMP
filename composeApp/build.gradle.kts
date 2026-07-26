@@ -157,8 +157,6 @@ kotlin {
             dependencies {
                 implementation("io.github.kdroidfilter:composewebview:1.0.0-beta-02")
 
-                api("io.github.kevinnzou:compose-webview-multiplatform:2.0.3")
-
                 implementation("com.kizitonwose.calendar:compose-multiplatform:2.9.0")
                 implementation(libs.kotlinx.datetime)
 

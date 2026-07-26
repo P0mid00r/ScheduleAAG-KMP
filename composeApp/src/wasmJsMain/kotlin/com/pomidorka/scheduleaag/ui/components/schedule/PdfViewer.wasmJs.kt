@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.multiplatform.webview.web.LoadingState
-import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.pomidorka.scheduleaag.ui.components.CustomWebView
 import com.pomidorka.scheduleaag.utils.isErrorRequest
+import io.github.kdroidfilter.webview.web.LoadingState
+import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
 
 @Composable
 actual fun PdfViewer(

@@ -1,7 +1,7 @@
 package com.pomidorka.scheduleaag.utils
 
-import com.multiplatform.webview.web.WebViewState
 import com.pomidorka.scheduleaag.Strings
+import io.github.kdroidfilter.webview.web.WebViewState
 
 fun WebViewState.isErrorRequest(): Boolean {
     this.errorsForCurrentRequest.let {

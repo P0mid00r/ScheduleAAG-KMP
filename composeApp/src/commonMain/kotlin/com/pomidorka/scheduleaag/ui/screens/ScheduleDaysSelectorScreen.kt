@@ -7,24 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.multiplatform.webview.request.RequestInterceptor
-import com.multiplatform.webview.request.WebRequest
-import com.multiplatform.webview.request.WebRequestInterceptResult
-import com.multiplatform.webview.web.WebViewNavigator
-import com.multiplatform.webview.web.rememberWebViewNavigator
-import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.ad.AdManager
 import com.pomidorka.scheduleaag.schedule.Result
@@ -41,6 +30,12 @@ import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
 import com.pomidorka.scheduleaag.ui.navigation.Route
 import com.pomidorka.scheduleaag.utils.currentPlatform
+import io.github.kdroidfilter.webview.request.RequestInterceptor
+import io.github.kdroidfilter.webview.request.WebRequest
+import io.github.kdroidfilter.webview.request.WebRequestInterceptResult
+import io.github.kdroidfilter.webview.web.WebViewNavigator
+import io.github.kdroidfilter.webview.web.rememberWebViewNavigator
+import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
 import kotlinx.coroutines.launch
 
 @Composable
@@ -180,7 +175,6 @@ fun ScheduleDaysSelectorScreen(
                         .fillMaxSize()
                         .background(Color.Transparent),
                     state = state,
-                    captureBackPresses = false,
                     navigator = webViewNavigator,
                 )
             }
