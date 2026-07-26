@@ -15,8 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Gradle setup
-        uses: ./.github/actions/gradle-setup
+#      - name: Gradle setup
+#        uses: ./.github/actions/gradle-setup
 
       - name: Build macOS DMG
         run: ./gradlew :desktopApp:packageDmg
