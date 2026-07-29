@@ -74,11 +74,12 @@ jobs:
 
       - name: Package unsigned .app into .ipa
         run: |
-          APP_PATH="./build/Build/Products/Release-iphoneos/iosApp.app"
-          if [ ! -d "$APP_PATH" ]; then
-            echo "❌ .app not found at $APP_PATH"
+          APP_PATH=$(find ./build/Build/Products/Release-iphoneos -name "*.app" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ No .app found in ./build/Build/Products/Release-iphoneos"
             exit 1
           fi
+          echo "Found app at $APP_PATH"
           mkdir -p Payload
           cp -R "$APP_PATH" Payload/
           zip -r iosApp.ipa Payload
