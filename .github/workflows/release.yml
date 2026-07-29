@@ -8,6 +8,26 @@ env:
 
 jobs:
 
+  build-desktop-linux:
+    name: Build Desktop Linux
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build Linux DEB
+        run: ./gradlew :desktopApp:packageReleaseDeb
+
+      - name: Upload Linux DEB
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-linux-deb
+          path: desktopApp/build/compose/binaries/main/deb/*.deb
+
   build-desktop-macos:
     name: Build Desktop macOS
     runs-on: macos-latest
@@ -15,14 +35,56 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-#      - name: Gradle setup
-#        uses: ./.github/actions/gradle-setup
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
 
       - name: Build macOS DMG
-        run: ./gradlew :composeApp:packageDmg
+        run: ./gradlew :composeApp:packageReleaseDmg
 
       - name: Upload macOS DMG
         uses: actions/upload-artifact@v4
         with:
           name: desktop-macos-dmg
           path: composeApp/build/compose/binaries/main/dmg/*.dmg
+
+  build-ios:
+    name: Build iOS app (unsigned IPA)
+    runs-on: macos-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gradle setup
+        uses: ./.github/actions/gradle-setup
+
+      - name: Build iOS device app (Release, unsigned)
+        run: |
+          xcodebuild build \
+            -project iosApp/iosApp.xcodeproj \
+            -configuration Release \
+            -scheme iosApp \
+            -sdk iphoneos \
+            -derivedDataPath ./build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -verbose
+
+      - name: Package unsigned .app into .ipa
+        run: |
+          APP_PATH="./build/Build/Products/Release-iphoneos/iosApp.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "❌ .app not found at $APP_PATH"
+            exit 1
+          fi
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/
+          zip -r iosApp.ipa Payload
+          rm -rf Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iosApp-unsigned
+          path: iosApp.ipa
