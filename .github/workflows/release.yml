@@ -8,6 +8,34 @@ env:
 
 jobs:
 
+  build-desktop-windows:
+    name: Build Desktop Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle
+
+      - name: Build Windows Exe Installer
+        run: ./gradlew :desktopApp:packageReleaseExe
+
+      - name: Upload Windows Exe Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows-installer
+          path: desktopApp/build/compose/binaries/main-release/exe/*.exe
+
+      - name: Build Portable Distributable
+        run: ./gradlew :desktopApp:createReleaseDistributable
+
+      - name: Upload Portable Distributable (folder)
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows-portable
+          path: desktopApp/build/compose/binaries/main-release/app/
+
   build-desktop-linux:
     name: Build Desktop Linux
     runs-on: ubuntu-latest
@@ -55,6 +83,9 @@ jobs:
 
       - name: Gradle setup
         uses: ./.github/actions/gradle-setup
+
+      - name: UpdateIosConfig
+        run: ./gradlew :composeApp:configureIosXcode
 
       - name: Generate AppConfig
         run: ./gradlew :composeApp:generateAppConfig
