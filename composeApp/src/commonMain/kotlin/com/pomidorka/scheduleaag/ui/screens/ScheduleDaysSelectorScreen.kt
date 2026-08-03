@@ -65,7 +65,7 @@ fun ScheduleDaysSelectorScreen(
                     request: WebRequest,
                     navigator: WebViewNavigator
                 ): WebRequestInterceptResult {
-                    if (request.url.contains("about:blank")) {
+                    if (request.url.contains("about:blank") || request.url.contains("data")) {
                         return WebRequestInterceptResult.Allow
                     } else {
                         scope.launch {

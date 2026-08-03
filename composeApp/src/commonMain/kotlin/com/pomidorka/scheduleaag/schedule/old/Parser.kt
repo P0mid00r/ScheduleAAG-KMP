@@ -14,7 +14,16 @@ sealed class Parser {
     suspend fun parseAllMonthHtml(url: String): Result<String> {
         return try {
             val doc = loadDocument(url)
-            Result.Success(doc.getElementsByClass("mtext").toString())
+            val container = doc.getElementsByClass("mtext")
+
+            container.forEach { element ->
+                element.select("a[target=\"_blank\"]").forEach { link ->
+                    link.removeAttr("target")
+                }
+            }
+
+            val html = container.toString()
+            Result.Success(html)
         } catch (_: Exception) {
             Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
         }
