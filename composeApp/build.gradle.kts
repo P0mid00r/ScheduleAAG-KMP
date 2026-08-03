@@ -11,8 +11,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("ru.ok.tracer") version "1.3.4"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.0"
+    id("ru.ok.tracer") version "1.4.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.10"
 }
 
 val localPropertiesFile = project.rootProject.file("local.properties")
@@ -136,11 +136,11 @@ kotlin {
             implementation("com.github.bhuvaneshw.pdfviewer:compose:1.1.0")
             implementation("com.github.bhuvaneshw.pdfviewer:compose-ui:1.1.0")
 
-            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.3.4"))
+            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.4.0"))
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
-            implementation("com.yandex.android:mobileads:8.1.0")
+            implementation("com.yandex.android:mobileads:8.3.0")
 
             implementation(libs.ktor.client.android)
             implementation(libs.compose.uiToolingPreview)
@@ -194,7 +194,6 @@ kotlin {
             implementation("io.github.conamobiledev:pdfkmp-viewer:1.2.0")
 
             implementation(libs.ktor.client.okhttp)
-            implementation("org.slf4j:slf4j-simple:2.0.13")
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
         }
@@ -270,9 +269,8 @@ compose.desktop {
         mainClass = "com.pomidorka.scheduleaag.MainKt"
 
         nativeDistributions {
-            modules("java.base")
 
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Deb)
             val appName = rootProject.extra["appName"].toString()
             val versionName = rootProject.extra["appVersionName"].toString().plus(".0")
 

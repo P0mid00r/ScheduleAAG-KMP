@@ -1,14 +1,12 @@
 package com.pomidorka.scheduleaag.schedule.old
 
-import com.pomidorka.scheduleaag.utils.currentPlatform
 import com.pomidorka.scheduleaag.utils.addProxyInUrl
+import com.pomidorka.scheduleaag.utils.currentPlatform
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 object ScheduleApi : Parser() {
     fun CollegeBuilding.toUrl(): String {
         return "https://altag.ru/student/schedule/rescheduling-${this.id}".let {
