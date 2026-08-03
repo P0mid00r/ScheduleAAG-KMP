@@ -67,6 +67,9 @@ object Strings {
 """
 
     const val TABLE_CSS = """
+html {
+    background-color:#fff;
+}
 #table {
 	color:#333;
 	font-size:14px;
