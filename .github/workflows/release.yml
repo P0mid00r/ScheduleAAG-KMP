@@ -13,8 +13,9 @@ on:
         default: 'windows,linux,macos,ios'
       create_draft:
         description: 'Создать draft-релиз? (true/false)'
-        required: false
-        default: 'true'
+        required: true
+        type: boolean
+        default: true
 
 env:
   APP_NAME: "ScheduleAAG"
@@ -25,6 +26,7 @@ jobs:
   build-desktop-windows:
     name: Build Desktop Windows
     runs-on: windows-latest
+    if: contains(github.event.inputs.platforms, 'windows')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,6 +59,7 @@ jobs:
   build-desktop-linux:
     name: Build Desktop Linux
     runs-on: ubuntu-latest
+    if: contains(github.event.inputs.platforms, 'linux')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,6 +79,7 @@ jobs:
   build-desktop-macos:
     name: Build Desktop macOS
     runs-on: macos-latest
+    if: contains(github.event.inputs.platforms, 'macos')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,6 +99,7 @@ jobs:
   build-ios:
     name: Build iOS app (unsigned IPA)
     runs-on: macos-latest
+    if: contains(github.event.inputs.platforms, 'ios')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -151,7 +156,7 @@ jobs:
     if: |
       always() &&
       !cancelled() &&
-      github.event.inputs.create_draft == 'true' &&
+      github.event.inputs.create_draft == true &&
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled')
     permissions:
