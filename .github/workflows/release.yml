@@ -221,22 +221,22 @@ jobs:
           
           # Windows installer (.exe)
           if [ -f ./artifacts/desktop-windows-installer/*.exe ]; then
-            mv ./artifacts/desktop-windows-installer/*.exe "./artifacts/desktop-windows-installer/${APP_NAME}-${VERSION}-windows-installer.exe"
+            mv ./artifacts/desktop-windows-installer/*.exe "./artifacts/desktop-windows-installer/${APP_NAME}-${VERSION}-windows-installer-x64.exe"
           fi
           
           # Windows portable (.zip)
           if [ -f ./artifacts/desktop-windows-portable/*.zip ]; then
-            mv ./artifacts/desktop-windows-portable/*.zip "./artifacts/desktop-windows-portable/${APP_NAME}-${VERSION}-windows-portable.zip"
+            mv ./artifacts/desktop-windows-portable/*.zip "./artifacts/desktop-windows-portable/${APP_NAME}-${VERSION}-windows-portable-x64.zip"
           fi
           
           # Linux (.deb)
           if [ -f ./artifacts/desktop-linux-deb/*.deb ]; then
-            mv ./artifacts/desktop-linux-deb/*.deb "./artifacts/desktop-linux-deb/${APP_NAME}-${VERSION}-linux.deb"
+            mv ./artifacts/desktop-linux-deb/*.deb "./artifacts/desktop-linux-deb/${APP_NAME}-${VERSION}-linux-x64.deb"
           fi
           
           # macOS (.dmg)
           if [ -f ./artifacts/desktop-macos-dmg/*.dmg ]; then
-            mv ./artifacts/desktop-macos-dmg/*.dmg "./artifacts/desktop-macos-dmg/${APP_NAME}-${VERSION}-macos.dmg"
+            mv ./artifacts/desktop-macos-dmg/*.dmg "./artifacts/desktop-macos-dmg/${APP_NAME}-${VERSION}-macos-arm64.dmg"
           fi
           
           # iOS (.ipa)
