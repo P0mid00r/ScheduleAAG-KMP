@@ -172,7 +172,7 @@ jobs:
     if: |
       always() &&
       !cancelled() &&
-      github.event.inputs.create_draft == true &&
+      github.event.inputs.create_draft == 'true' &&
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled')
     permissions:
