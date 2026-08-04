@@ -2,8 +2,22 @@ name: Release & Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия релиза (например, v1.2.3)'
+        required: true
+        default: 'v0.0.0'
+      platforms:
+        description: 'Какие платформы собрать (через запятую: windows,linux,macos,ios)'
+        required: false
+        default: 'windows,linux,macos,ios'
+      create_draft:
+        description: 'Создать draft-релиз? (true/false)'
+        required: false
+        default: 'true'
 
 env:
+  APP_NAME: "ScheduleAAG"
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
 
 jobs:
@@ -30,11 +44,15 @@ jobs:
       - name: Build Portable Distributable
         run: ./gradlew :composeApp:createReleaseDistributable
 
-      - name: Upload Portable Distributable (folder)
+      - name: Package Portable Distributable (zip)
+        run: |
+            7z a -r desktop-windows-portable.zip ./composeApp/build/compose/binaries/main-release/app/
+
+      - name: Upload Portable Distributable (zip)
         uses: actions/upload-artifact@v4
         with:
           name: desktop-windows-portable
-          path: composeApp/build/compose/binaries/main-release/app/
+          path: desktop-windows-portable.zip
 
   build-desktop-linux:
     name: Build Desktop Linux
@@ -121,3 +139,81 @@ jobs:
         with:
           name: iosApp-unsigned
           path: iosApp.ipa
+
+  create-draft-release:
+    name: Create Draft Release
+    runs-on: ubuntu-latest
+    needs:
+      - build-desktop-windows
+      - build-desktop-linux
+      - build-desktop-macos
+      - build-ios
+    if: |
+      always() &&
+      !cancelled() &&
+      github.event.inputs.create_draft == 'true' &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Переименовать файлы в формат ScheduleAAG-<version>-<platform>
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          APP="${{ env.APP_NAME }}"
+          
+          # Windows installer (.exe)
+          if [ -f ./artifacts/desktop-windows-installer/*.exe ]; then
+            mv ./artifacts/desktop-windows-installer/*.exe "./artifacts/desktop-windows-installer/${APP}-${VERSION}-windows-installer.exe"
+          fi
+          
+          # Windows portable (.zip)
+          if [ -f ./artifacts/desktop-windows-portable/*.zip ]; then
+            mv ./artifacts/desktop-windows-portable/*.zip "./artifacts/desktop-windows-portable/${APP}-${VERSION}-windows-portable.zip"
+          fi
+          
+          # Linux (.deb)
+          if [ -f ./artifacts/desktop-linux-deb/*.deb ]; then
+            mv ./artifacts/desktop-linux-deb/*.deb "./artifacts/desktop-linux-deb/${APP}-${VERSION}-linux.deb"
+          fi
+          
+          # macOS (.dmg)
+          if [ -f ./artifacts/desktop-macos-dmg/*.dmg ]; then
+            mv ./artifacts/desktop-macos-dmg/*.dmg "./artifacts/desktop-macos-dmg/${APP}-${VERSION}-macos.dmg"
+          fi
+          
+          # iOS (.ipa)
+          if [ -f ./artifacts/iosApp-unsigned/*.ipa ]; then
+            mv ./artifacts/iosApp-unsigned/*.ipa "./artifacts/iosApp-unsigned/${APP}-${VERSION}-ios.ipa"
+          fi
+
+      - name: List artifacts (для отладки)
+        run: ls -laR ./artifacts
+
+      - name: Create Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          draft: true
+          prerelease: false
+          make_latest: false
+
+          files: |
+            ./artifacts/desktop-windows-installer/ScheduleAAG-*.exe
+            ./artifacts/desktop-windows-portable/ScheduleAAG-*.zip
+            ./artifacts/desktop-linux-deb/ScheduleAAG-*.deb
+            ./artifacts/desktop-macos-dmg/ScheduleAAG-*.dmg
+            ./artifacts/iosApp-unsigned/ScheduleAAG-*.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
