@@ -250,8 +250,8 @@ jobs:
       - name: Create Draft Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          name: ${{ github.event.inputs.version }}
+          tag_name: ${{ steps.extract.outputs.version }}
+          name: ${{ steps.extract.outputs.version }}
           draft: true
           prerelease: false
           make_latest: false
