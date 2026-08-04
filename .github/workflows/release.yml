@@ -3,30 +3,42 @@ name: Release & Publish
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Версия релиза (например, v1.2.3)'
-        required: true
-        default: 'v0.0.0'
-      platforms:
-        description: 'Какие платформы собрать (через запятую: windows,linux,macos,ios)'
-        required: false
-        default: 'windows,linux,macos,ios'
-      create_draft:
-        description: 'Создать draft-релиз? (true/false)'
+      build_windows:
+        description: 'Build Windows'
         required: true
         type: boolean
         default: true
+      build_linux:
+          description: 'Build Linux'
+          required: true
+          type: boolean
+          default: true
+      build_macos:
+          description: 'Build macOS'
+          required: true
+          type: boolean
+          default: true
+      build_ios:
+          description: 'Build iOS (unsigned IPA)'
+          required: true
+          type: boolean
+          default: true
+      create_draft:
+          description: 'Create draft-release?'
+          required: true
+          type: boolean
+          default: true
 
 env:
-  APP_NAME: "ScheduleAAG"
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
 
 jobs:
 
+  # ===================== WINDOWS =====================
   build-desktop-windows:
     name: Build Desktop Windows
     runs-on: windows-latest
-    if: contains(github.event.inputs.platforms, 'windows')
+    if: github.event.inputs.build_windows == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,10 +68,11 @@ jobs:
           name: desktop-windows-portable
           path: desktop-windows-portable.zip
 
+  # ===================== LINUX =====================
   build-desktop-linux:
     name: Build Desktop Linux
     runs-on: ubuntu-latest
-    if: contains(github.event.inputs.platforms, 'linux')
+    if: github.event.inputs.build_linux == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,10 +89,11 @@ jobs:
           name: desktop-linux-deb
           path: composeApp/build/compose/binaries/main-release/deb/*.deb
 
+  # ===================== macOS =====================
   build-desktop-macos:
     name: Build Desktop macOS
     runs-on: macos-latest
-    if: contains(github.event.inputs.platforms, 'macos')
+    if: github.event.inputs.build_macos == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -96,10 +110,11 @@ jobs:
           name: desktop-macos-dmg
           path: composeApp/build/compose/binaries/main-release/dmg/*.dmg
 
+  # ===================== iOS =====================
   build-ios:
     name: Build iOS app (unsigned IPA)
     runs-on: macos-latest
-    if: contains(github.event.inputs.platforms, 'ios')
+    if: github.event.inputs.build_ios == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -145,6 +160,7 @@ jobs:
           name: iosApp-unsigned
           path: iosApp.ipa
 
+  # ===================== Create Release Draft =====================
   create-draft-release:
     name: Create Draft Release
     runs-on: ubuntu-latest
@@ -167,39 +183,65 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Extract app name and version from build.gradle.kts
+        id: extract
+        run: |
+          APP_NAME=$(grep -oP 'extra\["appName"\]\s*=\s*"\K[^"]+' build.gradle.kts | head -n 1)
+          VERSION=$(grep -oP 'extra\["appVersionName"\]\s*=\s*"\K[^"]+' build.gradle.kts | head -n 1)
+          if [ -z "$APP_NAME" ] || [ -z "$VERSION" ]; then
+            echo "❌ Не удалось извлечь appName или appVersionName из build.gradle.kts"
+            exit 1
+          fi
+          echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "✅ Извлечены: appName=$APP_NAME, version=$VERSION"
+
+      - name: Create git tag
+        run: |
+          VERSION="v${{ steps.extract.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "✅ Тег $VERSION уже существует"
+          else
+            git tag -a "$VERSION" -m "Release $VERSION"
+            git push origin "$VERSION"
+            echo "✅ Создан и запушен тег $VERSION"
+          fi
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
 
-      - name: Переименовать файлы в формат ScheduleAAG-<version>-<platform>
+      - name: Rename files to format ScheduleAAG-<version>-<platform>
         run: |
-          VERSION="${{ github.event.inputs.version }}"
-          APP="${{ env.APP_NAME }}"
+          VERSION="${{ steps.extract.outputs.version }}"
+          APP_NAME="${{ steps.extract.outputs.app_name }}"
           
           # Windows installer (.exe)
           if [ -f ./artifacts/desktop-windows-installer/*.exe ]; then
-            mv ./artifacts/desktop-windows-installer/*.exe "./artifacts/desktop-windows-installer/${APP}-${VERSION}-windows-installer.exe"
+            mv ./artifacts/desktop-windows-installer/*.exe "./artifacts/desktop-windows-installer/${APP_NAME}-${VERSION}-windows-installer.exe"
           fi
           
           # Windows portable (.zip)
           if [ -f ./artifacts/desktop-windows-portable/*.zip ]; then
-            mv ./artifacts/desktop-windows-portable/*.zip "./artifacts/desktop-windows-portable/${APP}-${VERSION}-windows-portable.zip"
+            mv ./artifacts/desktop-windows-portable/*.zip "./artifacts/desktop-windows-portable/${APP_NAME}-${VERSION}-windows-portable.zip"
           fi
           
           # Linux (.deb)
           if [ -f ./artifacts/desktop-linux-deb/*.deb ]; then
-            mv ./artifacts/desktop-linux-deb/*.deb "./artifacts/desktop-linux-deb/${APP}-${VERSION}-linux.deb"
+            mv ./artifacts/desktop-linux-deb/*.deb "./artifacts/desktop-linux-deb/${APP_NAME}-${VERSION}-linux.deb"
           fi
           
           # macOS (.dmg)
           if [ -f ./artifacts/desktop-macos-dmg/*.dmg ]; then
-            mv ./artifacts/desktop-macos-dmg/*.dmg "./artifacts/desktop-macos-dmg/${APP}-${VERSION}-macos.dmg"
+            mv ./artifacts/desktop-macos-dmg/*.dmg "./artifacts/desktop-macos-dmg/${APP_NAME}-${VERSION}-macos.dmg"
           fi
           
           # iOS (.ipa)
           if [ -f ./artifacts/iosApp-unsigned/*.ipa ]; then
-            mv ./artifacts/iosApp-unsigned/*.ipa "./artifacts/iosApp-unsigned/${APP}-${VERSION}-ios.ipa"
+            mv ./artifacts/iosApp-unsigned/*.ipa "./artifacts/iosApp-unsigned/${APP_NAME}-${VERSION}-ios.ipa"
           fi
 
       - name: List artifacts (для отладки)
