@@ -173,8 +173,14 @@ jobs:
       always() &&
       !cancelled() &&
       github.event.inputs.create_draft == 'true' &&
-      !contains(needs.*.result, 'failure') &&
-      !contains(needs.*.result, 'cancelled')
+      needs.build-desktop-windows.result != 'failure' &&
+      needs.build-desktop-linux.result != 'failure' &&
+      needs.build-desktop-macos.result != 'failure' &&
+      needs.build-ios.result != 'failure' &&
+      needs.build-desktop-windows.result != 'cancelled' &&
+      needs.build-desktop-linux.result != 'cancelled' &&
+      needs.build-desktop-macos.result != 'cancelled' &&
+      needs.build-ios.result != 'cancelled'
     permissions:
       contents: write
     steps:
@@ -250,8 +256,8 @@ jobs:
       - name: Create Draft Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.extract.outputs.version }}
-          name: ${{ steps.extract.outputs.version }}
+          tag_name: v${{ steps.extract.outputs.version }}
+          name: v${{ steps.extract.outputs.version }}
           draft: true
           prerelease: false
           make_latest: false
