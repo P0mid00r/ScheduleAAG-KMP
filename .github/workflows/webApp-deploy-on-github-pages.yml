@@ -19,6 +19,9 @@ jobs:
       - name: Generate AppConfig
         run: ./gradlew :composeApp:generateAppConfig
 
+      - name: UpgradeYarnLockFile
+        run: ./gradlew :composeApp:kotlinWasmUpgradeYarnLock
+
       - name: Build WebApp
         run: ./gradlew :composeApp:wasmJsBrowserDistribution
 
