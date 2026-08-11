@@ -20,7 +20,7 @@ jobs:
         run: ./gradlew :composeApp:generateAppConfig
 
       - name: UpgradeYarnLockFile
-        run: ./gradlew :composeApp:kotlinWasmUpgradeYarnLock
+        run: ./gradlew :kotlinWasmUpgradeYarnLock
 
       - name: Build WebApp
         run: ./gradlew :composeApp:wasmJsBrowserDistribution
