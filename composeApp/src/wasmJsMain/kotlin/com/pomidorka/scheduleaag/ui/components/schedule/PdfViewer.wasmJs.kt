@@ -46,6 +46,5 @@ actual fun PdfViewer(
     CustomWebView(
         modifier = modifier.background(Color.Transparent),
         state = webViewState,
-        captureBackPresses = false,
     )
 }
