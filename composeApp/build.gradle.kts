@@ -17,7 +17,7 @@ plugins {
 
 private fun getEnv(key: String): String? {
     val envVar = System.getenv(key)
-    if (!envVar.isNullOrEmpty()) return "\"\\$envVar\""
+    if (!envVar.isNullOrEmpty()) return "\"$envVar\""
 
     return null
 }
