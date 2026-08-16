@@ -15,6 +15,16 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.10"
 }
 
+private fun getEnv(key: String): String? {
+    val sysProp = project.findProperty(key) as? String
+    if (!sysProp.isNullOrEmpty()) return sysProp
+
+    val envVar = System.getenv(key)
+    if (!envVar.isNullOrEmpty()) return envVar
+
+    return null
+}
+
 val localPropertiesFile = project.rootProject.file("local.properties")
 val localProperties = Properties().apply {
     if (localPropertiesFile.exists()) {
@@ -206,8 +216,8 @@ kotlin {
 
 tracer {
     create("defaultConfig") {
-        pluginToken = localProperties.getProperty("tracerPluginToken") ?: ""
-        appToken = localProperties.getProperty("tracerAppToken") ?: ""
+        pluginToken = localProperties.getProperty("tracerPluginToken") ?: getEnv("ANDROID_TRACER_PLUGIN_TOKEN")!!
+        appToken = localProperties.getProperty("tracerAppToken") ?: getEnv("ANDROID_TRACER_APP_TOKEN")!!
     }
 
     create("debug") {
@@ -231,13 +241,13 @@ android {
         buildConfigField(
             type = "String",
             name = "RUSTORE_API_TOKEN",
-            value = localProperties.getProperty("rustoreVersionAppToken") ?: ""
+            value = localProperties.getProperty("rustoreVersionAppToken") ?: getEnv("RUSTORE_API_TOKEN")!!
         )
 
         buildConfigField(
             type = "String",
             name = "RUSTORE_KEY_ID",
-            value = localProperties.getProperty("rustoreKeyId") ?: "0"
+            value = localProperties.getProperty("rustoreKeyId") ?: getEnv("RUSTORE_KEY_ID")!!
         )
     }
     buildFeatures {

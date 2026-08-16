@@ -194,12 +194,20 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          ANDROID_TRACER_PLUGIN_TOKEN: ${{ secrets.ANDROID_TRACER_PLUGIN_TOKEN }}
+          ANDROID_TRACER_APP_TOKEN: ${{ secrets.ANDROID_TRACER_APP_TOKEN }}
+          RUSTORE_API_TOKEN: ${{ secrets.RUSTORE_API_TOKEN }}
+          RUSTORE_KEY_ID: ${{ secrets.RUSTORE_KEY_ID }}
         run: |
           ./gradlew :composeApp:assembleRelease \
             -Pandroid.injected.signing.store.file=$PWD/keystore.jks \
             -Pandroid.injected.signing.store.password="$KEYSTORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
             -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+            -PANDROID_TRACER_PLUGIN_TOKEN="$ANDROID_TRACER_PLUGIN_TOKEN" \
+            -PANDROID_TRACER_APP_TOKEN="$ANDROID_TRACER_APP_TOKEN" \
+            -PRUSTORE_API_TOKEN="$RUSTORE_API_TOKEN" \
+            -PRUSTORE_KEY_ID="$RUSTORE_KEY_ID"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
