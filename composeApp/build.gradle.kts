@@ -16,11 +16,8 @@ plugins {
 }
 
 private fun getEnv(key: String): String? {
-    val sysProp = project.findProperty(key) as? String
-    if (!sysProp.isNullOrEmpty()) return sysProp
-
     val envVar = System.getenv(key)
-    if (!envVar.isNullOrEmpty()) return envVar
+    if (!envVar.isNullOrEmpty()) return "\"\\$envVar\""
 
     return null
 }
