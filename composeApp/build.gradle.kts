@@ -17,7 +17,8 @@ plugins {
 
 private fun getEnv(key: String): String? {
     val envVar = System.getenv(key)
-    if (!envVar.isNullOrEmpty()) return "\"$envVar\""
+    if (!envVar.isNullOrEmpty()) return envVar
+//    if (!envVar.isNullOrEmpty()) return "\"$envVar\""
 
     return null
 }
@@ -238,13 +239,13 @@ android {
         buildConfigField(
             type = "String",
             name = "RUSTORE_API_TOKEN",
-            value = localProperties.getProperty("rustoreVersionAppToken") ?: getEnv("RUSTORE_API_TOKEN")!!
+            value = localProperties.getProperty("rustoreVersionAppToken") ?: "\"${getEnv("RUSTORE_API_TOKEN")}\""
         )
 
         buildConfigField(
             type = "String",
             name = "RUSTORE_KEY_ID",
-            value = localProperties.getProperty("rustoreKeyId") ?: getEnv("RUSTORE_KEY_ID")!!
+            value = localProperties.getProperty("rustoreKeyId") ?: "\"${getEnv("RUSTORE_KEY_ID")}\""
         )
     }
     buildFeatures {
