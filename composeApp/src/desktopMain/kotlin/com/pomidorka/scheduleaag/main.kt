@@ -27,6 +27,7 @@ import org.jetbrains.skiko.hostArch
 import org.jetbrains.skiko.hostOs
 import scheduleaag.composeapp.generated.resources.Res
 import scheduleaag.composeapp.generated.resources.new_logo_vika
+import java.awt.Dimension
 
 private fun getAppDataDirectory(
     appName: String,
@@ -60,6 +61,7 @@ fun main() {
             resizable = true,
             onCloseRequest = ::exitApplication,
         ) {
+            window.minimumSize = Dimension(450, 700)
             val scope = rememberCoroutineScope()
             var splashLoaded by remember { mutableStateOf(false) }
             timer(scope, 1) {
