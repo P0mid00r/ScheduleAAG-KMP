@@ -46,7 +46,7 @@ internal class IOSUpdater() : Updater {
         get() = this.body
 }
 
-actual fun Updates.update(listener: UpdateProgressListener?) {
+actual suspend fun Updates.update(listener: UpdateProgressListener?) {
     this.url.openUrl()
 
     listener?.onProgress(-1)

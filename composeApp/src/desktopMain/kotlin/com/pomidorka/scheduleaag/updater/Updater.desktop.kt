@@ -1,12 +1,15 @@
 package com.pomidorka.scheduleaag.updater
 
-import AppConfig.APP_NAME
 import com.pomidorka.scheduleaag.updater.github.Asset
 import com.pomidorka.scheduleaag.updater.github.GitHubApi
 import com.pomidorka.scheduleaag.updater.github.ReleasesData
 import com.pomidorka.scheduleaag.utils.Log
+import com.pomidorka.scheduleaag.utils.OperatingSystem
 import com.pomidorka.scheduleaag.utils.createHttpClient
-import com.pomidorka.scheduleaag.utils.openUrl
+import com.pomidorka.scheduleaag.utils.getOperatingSystem
+import io.github.kdroidfilter.platformtools.appmanager.AppManager.applicationExecutablePath
+import io.github.kdroidfilter.platformtools.appmanager.getAppInstaller
+import io.github.kdroidfilter.platformtools.appmanager.restartApplication
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.prepareGet
@@ -15,13 +18,15 @@ import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.remaining
 import io.ktor.utils.io.exhausted
 import io.ktor.utils.io.readRemaining
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.io.asSink
 import org.jetbrains.skiko.hostOs
 import java.io.File
 import kotlin.math.roundToInt
+import kotlin.system.exitProcess
+
+private const val TAG = "Updater.desktop.kt"
 
 internal class DesktopUpdater() : Updater {
     private val gitHubApi = GitHubApi(createHttpClient())
@@ -50,7 +55,6 @@ internal class DesktopUpdater() : Updater {
 
     private fun ReleasesData.availableUpdateForCurrentOS(): Asset? {
         val suffix = when {
-            // TODO: сделать чтобы находило только zip для windows
             hostOs.isWindows -> ".msi"
             hostOs.isMacOS -> ".dmg"
             hostOs.isLinux -> ".deb"
@@ -69,13 +73,14 @@ internal class DesktopUpdater() : Updater {
         get() = this.body
 }
 
-internal fun HttpClient.downloadFile(
+internal suspend fun HttpClient.downloadFile(
     url: String,
     path: String,
-    onError: (Throwable) -> Unit,
-    progress: (Int) -> Unit
-) = CoroutineScope(Dispatchers.IO).launch {
-    progress(0)
+    onError: ((Throwable) -> Unit)? = null,
+    onComplete: (() -> Unit)? = null,
+    progress: ((Int) -> Unit)? = null
+) {
+    progress?.invoke(0)
     val fileName = url.split('/').last()
     val file = File("$path/$fileName").apply {
         createNewFile()
@@ -88,7 +93,7 @@ internal fun HttpClient.downloadFile(
             var progressDownload: Int
             val fileSize: Long? = httpResponse.contentLength()
 
-            if (fileSize == null) progress(-1)
+            if (fileSize == null) progress?.invoke(-1)
             else {
                 val channel: ByteReadChannel = httpResponse.body()
                 var count = 0L
@@ -100,69 +105,161 @@ internal fun HttpClient.downloadFile(
                         chunk.transferTo(stream)
 
                         progressDownload = ((100f * count) / fileSize).roundToInt()
-                        progress(progressDownload)
+                        progress?.invoke(progressDownload)
                     }
-                    Log.info("Updater.desktop.kt") { "Скачен файл $fileName" }
                 }
             }
         }
+        onComplete?.invoke()
+        Log.info(TAG) { "Скачен файл $fileName" }
     } catch (ex: Exception) {
-        progress(-1)
-        onError(ex)
-        Log.error("Updater.desktop.kt") { ex.toString() }
+        progress?.invoke(-1)
+        onError?.invoke(ex)
+        Log.error(TAG) { ex.toString() }
     }
 }
 
-private fun startInstallerForWindows(fileArchive: File) {
-    val appFile = File("")
-    val batFile = createBatFile(fileArchive, appFile)
-    ProcessBuilder("cmd.exe", "/c powershell -Command \"Start-Process '${batFile.canonicalPath}' -Verb RunAs\"")
-        .start()
+val cacheDir = File(
+    System.getProperty("java.io.tmpdir") + "/ScheduleAAG_cache"
+).apply {
+    mkdir()
 }
 
-private fun getAppPath() {
-    val processPath = ProcessHandle.current().info()
+actual suspend fun Updates.update(listener: UpdateProgressListener?) {
+    withContext(Dispatchers.IO) {
+        val os = getOperatingSystem()
+
+        val appInstaller = getAppInstaller()
+        val fileName = url.split('/').last()
+        val file = File(cacheDir.absolutePath + "/" + fileName)
+        var isDownloaded = false
+
+        createHttpClient().use { client ->
+            client.downloadFile(
+                url = url,
+                path = cacheDir.absolutePath,
+                onError = { error -> listener?.onError(error) },
+                onComplete = { isDownloaded = true },
+                progress = { progress ->
+                    listener?.onProgress(progress)
+                    if (progress == 100) listener?.onCompleted()
+                },
+            )
+        }
+
+        if (!isDownloaded) return@withContext
+
+        fun installResult(success: Boolean, message: String?) {
+            if (success) {
+                Log.info(TAG) { "App installed successfully." }
+                file.delete()
+                Log.info(TAG) { "Deleted $file" }
+                listener?.onCompleted()
+                restartApplication()
+            } else {
+                listener?.onError(Throwable(message))
+                Log.error(TAG) { "Failed to install app: $message" }
+            }
+        }
+
+        when (os) {
+            OperatingSystem.MACOS -> installAppOnMac(file) { success, message ->
+                installResult(success, message)
+            }
+
+            else -> appInstaller.installApp(file) { success, message ->
+                installResult(success, message)
+            }
+        }
+    }
 }
 
-// TODO Добавить передачу названия файла для обновления
-private fun createBatFile(
-    fileArchive: File,
-    appPath: File
-) = File("update.bat").apply {
-    val bash = """
-@echo off
-echo Остановка программы...
-taskkill /f /im $APP_NAME.exe
-timeout /t 3
-echo Распаковка обновления...
-tar -xf "${fileArchive.canonicalPath}" -C "${appPath.canonicalPath}" --overwrite
-echo Запуск программы...
-start "" "${appPath.canonicalPath}/$APP_NAME.exe"
-"""
-    createNewFile()
-    writeText(bash)
+// TODO: Доделать чтобы перезапускался именно .app, а не как в restartApplication()
+private fun restartApplicationOnMac() {
+    try {
+        val appPath = applicationExecutablePath.substringBeforeLast(".app") + ".app"
+        val processBuilder = ProcessBuilder("open $appPath")
+        processBuilder.start()
+        exitProcess(0)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
-actual fun Updates.update(listener: UpdateProgressListener?) {
-    listener?.onProgress(-1)
-    listener?.onCompleted()
-    url.openUrl()
+private suspend fun installAppOnMac(dmgFile: File, onResult: (Boolean, String?) -> Unit) {
+    if (!dmgFile.exists() && dmgFile.extension != "dmg") {
+        onResult(false, "File ${dmgFile.absolutePath} does not exist dmg.")
+        return
+    }
 
-//    if (hostOs.isWindows && hostOs.isLinux) {
-//        val pathUpdates = "/updates"
-//        createHttpClient().downloadFile(
-//            url = url,
-//            path = pathUpdates,
-//            onError = { listener?.onError(it) }
-//        ) {
-//            listener?.onProgress(it)
-//            if (it == 100) listener?.onCompleted()
-//        }
-//    } else {
-//        listener?.onProgress(-1)
-//        listener?.onCompleted()
-//        url.openUrl()
-//    }
+    val appName = "ScheduleAAG.app"
+    val tempMount = "/Volumes/ScheduleAAG"
+    val targetDir = applicationExecutablePath.substringBeforeLast(".app") + ".app"
+
+    val scriptContent = $$"""
+        DMG_PATH="$${dmgFile.absolutePath}"
+        APP_NAME="$$appName"
+        TARGET_DIR="$$targetDir"
+        TEMP_MOUNT="$$tempMount"
+
+        echo "Монтирование DMG..."
+        expect << EOF
+        spawn hdiutil attach "$DMG_PATH" -mountpoint "$TEMP_MOUNT" -nobrowse
+        expect {
+            -re {Agree Y/N\?} { send "Y\r"; exp_continue }
+            -re {(:|\(END\))} { send "\r"; exp_continue }
+            eof
+        }
+        EOF
+
+        # Проверка, что том смонтирован
+        if [ ! -d "$TEMP_MOUNT" ]; then
+            echo "Ошибка: том не смонтирован"
+            exit 1
+        fi
+    
+        # Проверка наличия приложения в образе
+        if [ ! -d "$TEMP_MOUNT/$APP_NAME" ]; then
+            echo "Ошибка: приложение $APP_NAME не найдено в образе"
+            echo "Содержимое тома:"
+            ls -la "$TEMP_MOUNT"
+            exit 1
+        fi
+
+        echo "Закрытие старой версии..."
+        pkill -f "$APP_NAME" 2>/dev/null || true
+
+        echo "Удаление старой версии..."
+        rm -rf "$TARGET_DIR"
+
+        echo "Копирование новой версии..."
+        cp -R "$TEMP_MOUNT/$APP_NAME" "$TARGET_DIR"
+
+        echo "Снятие карантина..."
+        xattr -d com.apple.quarantine "$TARGET_DIR" 2>/dev/null || true
+
+        echo "Отмонтирование DMG..."
+        hdiutil detach "$TEMP_MOUNT"
+
+        echo "Запуск обновлённого приложения..."
+        open "$TARGET_DIR"
+
+    """.trimIndent()
+
+    withContext(Dispatchers.IO) {
+        val exitCode = ProcessBuilder(
+            "bash",
+            "-c",
+            scriptContent,
+        ).start()
+            .waitFor()
+
+        if (exitCode == 0) {
+            onResult(true, null)
+        } else {
+            onResult(false, "Ошибка при установке, возможно вы не выдали доступ к папке для процесса обновления!")
+        }
+    }
 }
 
 actual fun getUpdater(): Updater = DesktopUpdater()

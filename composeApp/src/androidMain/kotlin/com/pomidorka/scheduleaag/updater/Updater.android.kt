@@ -22,7 +22,7 @@ internal class AndroidUpdater : Updater {
     }
 }
 
-actual fun Updates.update(listener: UpdateProgressListener?) {
+actual suspend fun Updates.update(listener: UpdateProgressListener?) {
     listener?.onProgress(-1)
     this.url.openUrl()
     listener?.onCompleted()

@@ -18,7 +18,7 @@ data class Updates(
     val url: String,
 )
 
-expect fun Updates.update(listener: UpdateProgressListener? = null)
+expect suspend fun Updates.update(listener: UpdateProgressListener? = null)
 
 interface UpdateProgressListener {
     fun onProgress(percentage: Int)

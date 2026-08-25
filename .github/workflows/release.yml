@@ -51,14 +51,14 @@ jobs:
       - name: Setup Gradle
         uses: ./.github/actions/gradle-setup
 
-      - name: Build Windows Exe Installer
-        run: ./gradlew :composeApp:packageReleaseExe
+      - name: Build Windows Msi Installer
+        run: ./gradlew :composeApp:packageReleaseMsi
 
-      - name: Upload Windows Exe Installer
+      - name: Upload Windows Msi Installer
         uses: actions/upload-artifact@v4
         with:
           name: desktop-windows-installer
-          path: composeApp/build/compose/binaries/main-release/exe/*.exe
+          path: composeApp/build/compose/binaries/main-release/msi/*.msi
 
       - name: Build Portable Distributable
         run: ./gradlew :composeApp:createReleaseDistributable
@@ -279,9 +279,9 @@ jobs:
           VERSION="${{ steps.extract.outputs.version }}"
           APP_NAME="${{ steps.extract.outputs.app_name }}"
           
-          # Windows installer (.exe)
-          if [ -f ./artifacts/desktop-windows-installer/*.exe ]; then
-            mv ./artifacts/desktop-windows-installer/*.exe "./artifacts/desktop-windows-installer/${APP_NAME}-${VERSION}-windows-installer-x64.exe"
+          # Windows installer (.msi)
+          if [ -f ./artifacts/desktop-windows-installer/*.msi ]; then
+            mv ./artifacts/desktop-windows-installer/*.msi "./artifacts/desktop-windows-installer/${APP_NAME}-${VERSION}-windows-installer-x64.msi"
           fi
           
           # Windows portable (.zip)
@@ -322,10 +322,11 @@ jobs:
           make_latest: false
 
           files: |
-            ./artifacts/desktop-windows-installer/ScheduleAAG-*.exe
+            ./artifacts/desktop-windows-installer/ScheduleAAG-*.msi
             ./artifacts/desktop-windows-portable/ScheduleAAG-*.zip
             ./artifacts/desktop-linux-deb/ScheduleAAG-*.deb
             ./artifacts/desktop-macos-dmg/ScheduleAAG-*.dmg
             ./artifacts/iosApp-unsigned/ScheduleAAG-*.ipa
+            ./artifacts/android-apk/ScheduleAAG-*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

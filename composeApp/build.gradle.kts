@@ -18,7 +18,6 @@ plugins {
 private fun getEnv(key: String): String? {
     val envVar = System.getenv(key)
     if (!envVar.isNullOrEmpty()) return envVar
-//    if (!envVar.isNullOrEmpty()) return "\"$envVar\""
 
     return null
 }
@@ -200,6 +199,7 @@ kotlin {
         desktopMain.dependencies {
             implementation("io.github.conamobiledev:pdfkmp:1.2.0")
             implementation("io.github.conamobiledev:pdfkmp-viewer:1.2.0")
+            implementation("io.github.kdroidfilter:platformtools.appmanager:0.7.5")
 
             implementation(libs.ktor.client.okhttp)
             implementation(compose.desktop.currentOs)
@@ -277,8 +277,7 @@ compose.desktop {
         mainClass = "com.pomidorka.scheduleaag.MainKt"
 
         nativeDistributions {
-
-            targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             val appName = rootProject.extra["appName"].toString()
             val versionName = rootProject.extra["appVersionName"].toString().plus(".0")
 
@@ -297,6 +296,7 @@ compose.desktop {
                 menuGroup = "start-menu-group"
                 shortcut = true
                 iconFile.set(project.file("icons/icon.ico"))
+                perUserInstall = true
             }
             linux {
                 shortcut = true

@@ -18,6 +18,7 @@ import com.pomidorka.scheduleaag.updater.getUpdater
 import com.pomidorka.scheduleaag.updater.update
 import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.currentPlatform
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,7 +33,7 @@ fun App() {
     val showProgressBar by remember {
         derivedStateOf { progress in 0..100 }
     }
-    val updaterListener = if (!platform.type.isDesktop) {
+    val updaterListener = if (platform.type.isDesktop) {
         object : UpdateProgressListener {
             override fun onProgress(percentage: Int) {
                 progress = percentage
@@ -71,16 +72,20 @@ fun App() {
     LoadingDialog(loadingDialogController)
 
     updates?.let {
-        UpdaterDialog(
-            versionName = it.versionName,
-            whatsNew = it.whatsNew,
-            onUpdateClick = {
-                it.update(updaterListener)
-            },
-            onCancelClick = {
-                updates = null
-            },
-        )
+        if (!showProgressBar) {
+            UpdaterDialog(
+                versionName = it.versionName,
+                whatsNew = it.whatsNew,
+                onUpdateClick = {
+                    scope.launch(Dispatchers.Default) {
+                        it.update(updaterListener)
+                    }
+                },
+                onCancelClick = {
+                    updates = null
+                },
+            )
+        }
     }
 
     if (showProgressBar) {
