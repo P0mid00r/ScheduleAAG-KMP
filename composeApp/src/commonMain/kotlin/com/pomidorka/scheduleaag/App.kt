@@ -88,8 +88,17 @@ fun App() {
         }
     }
 
+    // TODO: Нужно переписать этот фрагмент
     if (showProgressBar) {
-        ProgressDialog(progress)
+        if (progress >= 100) {
+            LoadingDialog(
+                loadingDialogController = LoadingDialogController(
+                    message = "Установка обновления..."
+                ).apply { showDialog() },
+            )
+        } else {
+            ProgressDialog(progress)
+        }
     }
 
     MaterialTheme {
