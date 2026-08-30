@@ -24,7 +24,7 @@
 ## Поддерживаемые платформы:
 | Платформа                                                               | Минимальная версия                              |
 |-------------------------------------------------------------------------|-------------------------------------------------|
-| [Web](https://p0mid00r.github.io/)                                      | Браузеры с поддержкой WasmGC (Safari iOS 18.2+) |
+| [Web](https://scheduleaag.github.io/)                                      | Браузеры с поддержкой WasmGC (Safari iOS 18.2+) |
 | [Android](https://www.rustore.ru/catalog/app/com.pomidorka.scheduleaag) | Android 8.0                                     |
 | iOS                                                                     | iOS 15                                          |
 | Windows                                                                 | Windows 10,11 (x86-64, arm64)                   |

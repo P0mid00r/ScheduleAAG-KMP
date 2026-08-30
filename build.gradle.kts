@@ -12,6 +12,6 @@ plugins {
 
 allprojects {
     extra["appName"] = "ScheduleAAG"
-    extra["appVersionName"] = "1.41"
-    extra["appVersionCode"] = 1_410
+    extra["appVersionName"] = "1.42"
+    extra["appVersionCode"] = 1_420
 }
