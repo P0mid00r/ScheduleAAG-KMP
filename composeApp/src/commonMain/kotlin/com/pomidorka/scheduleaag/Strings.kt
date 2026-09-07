@@ -1,12 +1,8 @@
 package com.pomidorka.scheduleaag
 
 object Strings {
-//    private const val PROXY = ""
-//    private const val PROXY = "https://cors-anywhere.com/"
-//    const val PROXY = "https://api.allorigins.win/get?url="
-// ОЧЕНЬ МАЛО ЗАПРОСОВ ДАЕТСЯ    const val PROXY = "https://api.cors.lol/?url="
-//    const val PROXY = "https://corsproxy.io/?url="
-    const val PROXY = "https://corsproxy.io/"
+    const val PROXY = "https://proxy.cors.sh/"
+//    const val PROXY = "https://api.wtoolskit.com/proxy/"
 
     const val PROGRESS_DIALOG_SCHEDULE = "Загрузка расписания…"
     const val PROGRESS_DIALOG_LOADING_PAGE = "Загрузка страницы…"
