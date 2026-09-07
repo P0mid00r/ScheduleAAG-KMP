@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.ktor.plugin) apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.10"
 }
 
