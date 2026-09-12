@@ -112,8 +112,10 @@ fun ScheduleDaysSelectorScreen(
                                 DropdownMenuItem(
                                     text = { Text(building.name) },
                                     onClick = {
-                                        html = null
-                                        selectedCollegeBuilding = building
+                                        if (selectedCollegeBuilding != building) {
+                                            html = null
+                                            selectedCollegeBuilding = building
+                                        }
                                         expandedDropdownMenu = false
                                     },
                                 )
