@@ -15,9 +15,11 @@ fun Application.configureProxyRoute() {
                     url.startsWith("https://", ignoreCase = true)
                 ) url else "https://$url"
 
-                val newResponse = client.get(targetUrl)
-                val statusCode = newResponse.status
-                call.respond(statusCode,newResponse.bodyAsText())
+                runCatching {
+                    val newResponse = client.get(targetUrl)
+                    val statusCode = newResponse.status
+                    call.respond(statusCode,newResponse.bodyAsText())
+                }.onFailure { call.respond(HttpStatusCode.BadRequest) }
             } ?: call.respond(HttpStatusCode.BadRequest)
         }
     }
