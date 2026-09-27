@@ -5,6 +5,7 @@ import com.pomidorka.scheduleaag.utils.createHttpClient
 import com.pomidorka.scheduleaag.utils.currentPlatform
 import com.pomidorka.scheduleaag.schedule.Result
 import com.pomidorka.scheduleaag.utils.addProxyInUrl
+import com.pomidorka.scheduleaag.utils.executeWithProxy
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -18,10 +19,7 @@ object ScheduleInteractiveApi {
 //        if (getPlatform().type.isWeb) Strings.PROXY else ""
 //    ).plus("http://schedule.altag.ru:89/")
 
-    private val BASE_URL = "https://schedule.altag.ru/".let {
-        if (currentPlatform().type.isWeb) it.addProxyInUrl()
-        else it
-    }
+    private const val BASE_URL = "https://schedule.altag.ru/"
 
     private val client = createHttpClient()
 
@@ -45,17 +43,19 @@ object ScheduleInteractiveApi {
         path: String,
         formBody: Parameters
     ): String {
-        return client.post("$BASE_URL$path") {
-            headers {
+        return client.executeWithProxy("$BASE_URL$path") { url ->
+            post(url) {
+                headers {
 //                TODO: Сервер должен вернуть * чтобы был доступ с веб версии
 //                append("Access-Control-Allow-Origin", "*")
-                append("Connection", "keep-alive")
-                append("Content-Type", "application/x-www-form-urlencoded")
-                append("X-Requested-With", "XMLHttpRequest")
-            }
+                    append("Connection", "keep-alive")
+                    append("Content-Type", "application/x-www-form-urlencoded")
+                    append("X-Requested-With", "XMLHttpRequest")
+                }
 
-            setBody(FormDataContent(formBody))
-        }.bodyAsText()
+                setBody(FormDataContent(formBody))
+            }.bodyAsText()
+        }
     }
 
     suspend inline fun FilterType.getFilters() = getFiltersAtType(this)

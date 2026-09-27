@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     id("ru.ok.tracer") version "1.4.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.20"
 }
 
 private fun getEnv(key: String): String? {
@@ -147,7 +147,7 @@ kotlin {
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
-            implementation("com.yandex.android:mobileads:8.3.0")
+            implementation("com.yandex.android:mobileads:8.5.0")
 
             implementation(libs.ktor.client.android)
             implementation(libs.compose.uiToolingPreview)

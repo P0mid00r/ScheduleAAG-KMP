@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::modules)
+    embeddedServer(Netty, port = 80, host = "0.0.0.0", module = Application::modules)
         .start(wait = true)
 }
 

@@ -9,19 +9,13 @@ import kotlin.time.Clock
 
 object ScheduleApi : Parser() {
     fun CollegeBuilding.toUrl(): String {
-        return "https://altag.ru/student/schedule/rescheduling-${this.id}".let {
-            if (currentPlatform().type.isWeb) it.addProxyInUrl()
-            else it
-        }
+        return "https://altag.ru/student/schedule/rescheduling-${this.id}"
     }
 
     suspend fun getAllMonthHtml(collegeBuilding: CollegeBuilding) = parseAllMonthHtml(collegeBuilding.toUrl())
 
     suspend fun getScheduleCallsHtml() = parseScheduleCallsHtml(
-        "https://altag.ru/student/schedule/call_schedule".let {
-            if (currentPlatform().type.isWeb) it.addProxyInUrl()
-            else it
-        }
+        "https://altag.ru/student/schedule/call_schedule"
     )
 
     fun getDayOfWeek(): String {

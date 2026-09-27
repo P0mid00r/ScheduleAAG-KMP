@@ -1,13 +1,17 @@
 package com.pomidorka.scheduleaag.schedule.old
 
 import com.fleeksoft.ksoup.Ksoup
-import com.fleeksoft.ksoup.network.parseGetRequest
 import com.fleeksoft.ksoup.nodes.Document
 import com.fleeksoft.ksoup.select.Elements
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.schedule.Result
 import com.pomidorka.scheduleaag.utils.DateTime
+import com.pomidorka.scheduleaag.utils.createHttpClient
+import com.pomidorka.scheduleaag.utils.executeWithProxy
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.datetime.*
+import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 
 sealed class Parser {
@@ -104,7 +108,15 @@ sealed class Parser {
         }
     }
 
-    private suspend fun loadDocument(url: String) = Ksoup.parseGetRequest(url)
+    private suspend fun loadDocument(url: String): Document {
+        val html = createHttpClient().use { client ->
+            client.executeWithProxy(url) {
+                get(it).bodyAsText()
+            }
+        }
+
+        return Ksoup.parse(html)
+    }
 
     private fun Document.parseTables() = this.getElementsByTag("tbody")
 }
@@ -123,7 +135,15 @@ class ScheduleTableParser {
         }
     }
 
-    private suspend fun loadDocument(url: String) = Ksoup.parseGetRequest(url)
+    private suspend fun loadDocument(url: String): Document {
+        val html = createHttpClient().use { client ->
+            client.executeWithProxy(url) {
+                get(it).bodyAsText()
+            }
+        }
+
+        return Ksoup.parse(html)
+    }
 
     private fun Document.parseContainer() = this.getElementsByClass("mtext")
 
@@ -171,11 +191,13 @@ class ScheduleTableParser {
     }
 }
 
+@Serializable
 data class ScheduleMonth(
     val month: Month,
     val scheduleDays: List<ScheduleDay>,
 )
 
+@Serializable
 data class ScheduleDay(
     val date: LocalDate,
     val url: String?,
