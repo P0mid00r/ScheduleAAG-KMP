@@ -145,6 +145,7 @@ fun ScheduleInteractive(
         date = selectedDateMillis.getLocalDateFromMillis(),
         onDateSelected = {
             selectedDateMillis = it.getMillisFromDate()
+            scheduleList = emptyList()
             isShowDatePicker = false
         },
         onDismiss = {
