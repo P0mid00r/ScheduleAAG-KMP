@@ -296,14 +296,28 @@ private fun ButtonsPanel(
 
         Spacer(Modifier.padding(5.dp))
 
-        Button(
-            text = "Выбрать день",
-            onClick = {
-                Log.info("MainScreen.kt") { "Переход в выбор дня с выбранным корпусом '${SettingsData.selectedCollegeBuilding.name}'" }
-                navController.navigate(Route.ScheduleDaysSelectorScreen)
-            },
-            modifier = Modifier
-        )
+        Row {
+            Button(
+                text = "Выбрать день",
+                onClick = {
+                    Log.info("MainScreen.kt") { "Переход в выбор дня с выбранным корпусом '${SettingsData.selectedCollegeBuilding.name}'" }
+                    navController.navigate(Route.ScheduleDaysSelectorScreen)
+                },
+                modifier = Modifier.weight(1f),
+            )
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Button(
+                text = "ДОПы",
+                onClick = {
+                    Log.info("MainScreen.kt") { "Переход в выбор ДОПов" }
+                    navController.navigate(Route.ScheduleDopSelectorScreen)
+                },
+                modifier = Modifier.weight(1f),
+            )
+        }
+
 
         Spacer(Modifier.padding(5.dp))
 

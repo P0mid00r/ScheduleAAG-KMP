@@ -1,7 +1,5 @@
 package com.pomidorka.scheduleaag.schedule.old
 
-import com.pomidorka.scheduleaag.utils.addProxyInUrl
-import com.pomidorka.scheduleaag.utils.currentPlatform
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -13,6 +11,8 @@ object ScheduleApi : Parser() {
     }
 
     suspend fun getAllMonthHtml(collegeBuilding: CollegeBuilding) = parseAllMonthHtml(collegeBuilding.toUrl())
+
+    suspend fun getDopHtml() = parseAllMonthHtml("https://altag.ru/student/schedule/schedul_dop")
 
     suspend fun getScheduleCallsHtml() = parseScheduleCallsHtml(
         "https://altag.ru/student/schedule/call_schedule"

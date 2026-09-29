@@ -9,7 +9,6 @@ import com.pomidorka.scheduleaag.data.SettingsData
 import com.pomidorka.scheduleaag.schedule.interactive.FilterType
 import com.pomidorka.scheduleaag.schedule.interactive.ScheduleType
 import com.pomidorka.scheduleaag.ui.screens.*
-import com.pomidorka.scheduleaag.utils.Log
 
 @Composable
 fun AppNavigation() {
@@ -49,6 +48,11 @@ fun AppNavigation() {
             val collegeBuilding = SettingsData.selectedCollegeBuilding
 
             ScheduleDaysSelectorScreen(navController, collegeBuilding)
+        }
+
+        composable<Route.ScheduleDopSelectorScreen> {
+
+            ScheduleDopSelectorScreen(navController)
         }
 
         composable<Route.CallsScreen> {

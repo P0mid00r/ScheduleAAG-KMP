@@ -28,4 +28,7 @@ sealed class Route {
 
     @Serializable
     data object ScheduleDaysSelectorScreen
+
+    @Serializable
+    data object ScheduleDopSelectorScreen
 }
