@@ -10,7 +10,8 @@ suspend fun <T> HttpClient.executeWithProxy(
     isNeedProxy: Boolean = true,
     block: suspend HttpClient.(String) -> T
 ): T {
-    if (currentPlatform().type.isWeb) return this.executeWithProxyForWebApp(url, block)
+// TODO: Чтобы использовать надо получить сертификат на сервере    if (currentPlatform().type.isWeb) return this.executeWithProxyForWebApp(url, block)
+    if (currentPlatform().type.isWeb) return this.block(Strings.SECOND_PROXY_FOR_WEB_APP + url)
     if (!isNeedProxy) return this.block(url)
 
     return try {
