@@ -94,8 +94,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 kotlin {
-//    jvmToolchain(17)
-
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -104,7 +102,6 @@ kotlin {
     }
 
     listOf(
-//        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -197,8 +194,8 @@ kotlin {
         }
 
         desktopMain.dependencies {
-            implementation("io.github.conamobiledev:pdfkmp:1.2.0")
-            implementation("io.github.conamobiledev:pdfkmp-viewer:1.2.0")
+            implementation("io.github.conamobiledev:pdfkmp:1.3.0")
+            implementation("io.github.conamobiledev:pdfkmp-viewer:1.3.0")
             implementation("io.github.kdroidfilter:platformtools.appmanager:0.7.5")
 
             implementation(libs.ktor.client.okhttp)
