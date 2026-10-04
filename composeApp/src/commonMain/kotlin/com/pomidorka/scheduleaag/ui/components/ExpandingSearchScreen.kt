@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -12,6 +14,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import com.pomidorka.scheduleaag.schedule.Result
 import com.pomidorka.scheduleaag.schedule.interactive.FilterData
 import com.pomidorka.scheduleaag.schedule.interactive.FilterType
@@ -111,6 +115,7 @@ private fun SearchBarFilters(
     onExpandedChanged: (Boolean) -> Unit,
     onSelectedItem: (FilterData) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     var query by remember { mutableStateOf("") }
 
     SearchBar(
@@ -134,6 +139,14 @@ private fun SearchBarFilters(
                         }
                     }
                 },
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                    }
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                ),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
