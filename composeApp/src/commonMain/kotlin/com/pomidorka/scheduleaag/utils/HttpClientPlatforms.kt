@@ -10,11 +10,24 @@ suspend fun <T> HttpClient.executeWithProxy(
     isNeedProxy: Boolean = true,
     block: suspend HttpClient.(String) -> T
 ): T {
-    if (!isNeedProxy) this.block(url)
+    if (currentPlatform().type.isWeb) return this.executeWithProxyForWebApp(url, block)
+    if (!isNeedProxy) return this.block(url)
 
     return try {
         this.block(Strings.PROXY + url)
     } catch (_: Exception) {
         this.block(url)
+    }
+}
+
+// TODO: Костыль, но что поделать((
+private suspend fun <T> HttpClient.executeWithProxyForWebApp(
+    url: String,
+    block: suspend HttpClient.(String) -> T
+): T {
+    return try {
+        this.block(Strings.PROXY + url)
+    } catch (_: Exception) {
+        this.block(Strings.SECOND_PROXY_FOR_WEB_APP + url)
     }
 }
