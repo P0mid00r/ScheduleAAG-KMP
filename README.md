@@ -14,12 +14,9 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/P0mid00r/ScheduleAAG-KMP?label=Версия)](https://github.com/P0mid00r/ScheduleAAG-KMP/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/P0mid00r/ScheduleAAG-KMP/total?label=Загрузки)](https://github.com/P0mid00r/ScheduleAAG-KMP/releases)
 [![Kotlin](https://img.shields.io/badge/kotlin-2.4.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-v1.12.0-blue)](https://developer.android.com/jetpack/compose)
-![License](https://img.shields.io/github/license/P0mid00r/ScheduleAAG-KMP?label=Лицензия)
-![badge-Android](https://img.shields.io/badge/Platform-Android-green)
-![badge-web](https://img.shields.io/badge/Platform-Web-blueviolet.svg?style=flat)
-![badge-desktop](http://img.shields.io/badge/Platform-Desktop-4D76CD.svg?style=flat)
-![badge-iOS](https://img.shields.io/badge/Platform-iOS-lightgray)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-v1.12.1-blue)](https://developer.android.com/jetpack/compose)
+[![License](https://img.shields.io/github/license/P0mid00r/ScheduleAAG-KMP?label=Лицензия)](https://github.com/P0mid00r/ScheduleAAG-KMP/blob/main/LICENSE.txt)
+![Platforms](https://img.shields.io/badge/Platforms-Android%20+%20iOS%20+%20Desktop%20+%20Web-brightgreen?logo=kotlin&logoColor=white&color=8d69e0)
 
 ## Поддерживаемые платформы:
 | Платформа                                                               | Минимальная версия                              |
