@@ -68,6 +68,19 @@ object Strings {
 html {
     background-color:#fff;
 }
+h1 {
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 23px;
+    margin: 0px 30px;
+    color:#007C3C;
+    display: block;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    unicode-bidi: isolate;
+}
 #table {
 	color:#333;
 	font-size:14px;
