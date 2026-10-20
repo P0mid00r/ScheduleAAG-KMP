@@ -76,7 +76,7 @@ jobs:
   # ===================== LINUX =====================
   build-desktop-linux:
     name: Build Desktop Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: github.event.inputs.build_linux == 'true'
     steps:
       - name: Checkout
