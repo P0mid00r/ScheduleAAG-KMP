@@ -3,6 +3,7 @@ package com.pomidorka.scheduleaag.updater
 import com.pomidorka.scheduleaag.updater.github.Asset
 import com.pomidorka.scheduleaag.updater.github.GitHubApi
 import com.pomidorka.scheduleaag.updater.github.ReleasesData
+import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.createHttpClient
 import com.pomidorka.scheduleaag.utils.openUrl
 
@@ -24,7 +25,8 @@ internal class IOSUpdater() : Updater {
                     url = asset.browser_download_url,
                 )
             } else null
-        } catch (_: Exception) {
+        } catch (ex: Exception) {
+            Log.error("IOSUpdater.kt") { ex.stackTraceToString() }
             return null
         }
     }

@@ -17,7 +17,7 @@ import io.ktor.http.contentLength
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.core.remaining
 import io.ktor.utils.io.exhausted
-import io.ktor.utils.io.readRemaining
+import io.ktor.utils.io.readBuffer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.io.asSink
@@ -46,7 +46,8 @@ internal class DesktopUpdater() : Updater {
                     url = asset.browser_download_url,
                 )
             } else null
-        } catch (_: Exception) {
+        } catch (ex: Exception) {
+            Log.error("DesktopUpdater.kt") { ex.stackTraceToString() }
             return null
         }
     }
@@ -99,7 +100,7 @@ internal suspend fun HttpClient.downloadFile(
                 var count = 0L
                 stream.use {
                     while (!channel.exhausted()) {
-                        val chunk = channel.readRemaining(bufferSize)
+                        val chunk = channel.readBuffer(bufferSize)
                         count += chunk.remaining
 
                         chunk.transferTo(stream)

@@ -1,5 +1,6 @@
 package com.pomidorka.scheduleaag.updater
 
+import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.openUrl
 
 internal class AndroidUpdater : Updater {
@@ -16,8 +17,9 @@ internal class AndroidUpdater : Updater {
                     url = url
                 )
             } else null
-        } catch (_: Exception) {
-           null
+        } catch (ex: Exception) {
+            Log.error("AndroidUpdater.kt") { ex.stackTraceToString() }
+            null
         }
     }
 }
