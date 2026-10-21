@@ -178,17 +178,16 @@ private fun FiltersList(
     query: String,
     onSelectedItem: (item: FilterData) -> Unit
 ) {
+    val qTokens = remember(query) { tokenize(query) }
+
+    val filtered = if (qTokens.isEmpty()) filtersList
+    else filtersList
+        .mapNotNull { item -> scoreOf(qTokens, item.data)?.let { item to it } }
+        .sortedByDescending { it.second }
+        .map { it.first }
+
     LazyColumn {
-        items(filtersList.filter {
-            it.data
-                .lowercase()
-                .filterNot { char -> char == '-' }
-                .startsWith(
-                    query
-                        .lowercase()
-                        .filterNot { char -> char == '-' }
-                )
-        }) { item ->
+        items(filtered, key = { it.hash }) { item ->
             ListItem(
                 modifier = Modifier.clickable {
                     onSelectedItem(item)
@@ -204,4 +203,90 @@ private fun FiltersList(
             HorizontalDivider()
         }
     }
+}
+
+private val SEPARATORS = Regex("[^\\p{L}\\p{N}]+")
+
+private fun normalize(text: String): String =
+    text.lowercase()
+        .replace('ё', 'е')
+        .replace(SEPARATORS, " ")
+        .trim()
+
+private fun tokenize(text: String): List<String> =
+    normalize(text).split(' ').filter { it.isNotEmpty() }
+
+private fun maxDistFor(len: Int): Int = when {
+    len <= 3 -> 0
+    len <= 5 -> 1
+    len <= 8 -> 2
+    else     -> 3
+}
+
+private fun levenshtein(a: String, b: String, maxDist: Int): Int? {
+    if (kotlin.math.abs(a.length - b.length) > maxDist) return null
+    val la = a.length; val lb = b.length
+    var prev = IntArray(lb + 1) { it }
+    var curr = IntArray(lb + 1)
+    for (i in 1..la) {
+        curr[0] = i
+        var rowMin = i
+        for (j in 1..lb) {
+            val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+            curr[j] = minOf(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost)
+            if (curr[j] < rowMin) rowMin = curr[j]
+        }
+        if (rowMin > maxDist) return null
+        val t = prev; prev = curr; curr = t
+    }
+    return if (prev[lb] <= maxDist) prev[lb] else null
+}
+
+/**
+ * Совпадение в любую сторону: "ул"↔"улица", "корп"↔"корпус", "титов"↔"титова".
+ * Токены короче 2 символов не участвуют — защита от оверматчинга
+ * ("г"→"город", "к"→"корпус").
+ */
+private fun prefixMatch(a: String, b: String): Boolean {
+    if (a.length < 2 || b.length < 2) return false
+    return a.startsWith(b) || b.startsWith(a)
+}
+
+private fun scoreToken(q: String, tokens: List<String>, joined: String): Int? {
+    val exact = tokens.indexOfFirst { it == q }
+    if (exact >= 0) return 100 - exact
+
+    val prefix = tokens.indexOfFirst { prefixMatch(it, q) }
+    if (prefix >= 0) return 60 - prefix
+
+    if (q.length >= 2) {
+        val contains = tokens.indexOfFirst { it.length >= 2 && it.contains(q) }
+        if (contains >= 0) return 30 - contains
+    }
+
+    if (q.length >= 2 && joined.contains(q)) return 15
+
+    val md = maxDistFor(q.length)
+    if (md > 0) {
+        var best: Int? = null
+        for (t in tokens) {
+            val d = levenshtein(q, t, md) ?: continue
+            if (best == null || d < best) best = d
+            if (d == 0) break
+        }
+        if (best != null) return 20 - best * 5
+    }
+    return null
+}
+
+private fun scoreOf(qTokens: List<String>, target: String): Int? {
+    if (qTokens.isEmpty()) return 0
+    val tokens = tokenize(target)
+    if (tokens.isEmpty()) return null
+    val joined = tokens.joinToString("")
+    var total = 0
+    for (q in qTokens) {
+        total += scoreToken(q, tokens, joined) ?: return null
+    }
+    return total
 }
