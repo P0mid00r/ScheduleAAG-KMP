@@ -27,7 +27,7 @@ import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialogController
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
-import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
+import dev.nucleusframework.webview.web.rememberWebViewStateWithHTMLData
 import kotlinx.coroutines.launch
 
 @Composable

@@ -5,11 +5,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.HtmlElementView
-import io.github.kdroidfilter.webview.jsbridge.WebViewJsBridge
-import io.github.kdroidfilter.webview.request.WebRequest
-import io.github.kdroidfilter.webview.web.WebContent
-import io.github.kdroidfilter.webview.web.WebViewNavigator
-import io.github.kdroidfilter.webview.web.WebViewState
+import dev.nucleusframework.webview.jsbridge.WebViewJsBridge
+import dev.nucleusframework.webview.request.WebRequest
+import dev.nucleusframework.webview.web.NativeWebView
+import dev.nucleusframework.webview.web.WebContent
+import dev.nucleusframework.webview.web.WebViewNavigator
+import dev.nucleusframework.webview.web.WebViewState
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
@@ -26,8 +27,8 @@ actual fun CustomWebView(
     state: WebViewState,
     navigator: WebViewNavigator,
     webViewJsBridge: WebViewJsBridge?,
-    onCreated: () -> Unit,
-    onDispose: () -> Unit,
+    onCreated: (NativeWebView) -> Unit,
+    onDispose: (NativeWebView) -> Unit,
 ) {
     val script = """
         <script>

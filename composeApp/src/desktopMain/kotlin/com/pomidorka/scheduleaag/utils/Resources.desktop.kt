@@ -1,21 +1,23 @@
 package com.pomidorka.scheduleaag.utils
 
-import java.io.File
-import java.util.Base64
+import java.util.*
+
+private val resourceLoader: ClassLoader
+    get() = Thread.currentThread().contextClassLoader
+        ?: ClassLoader.getSystemClassLoader()
 
 actual fun readTextFileFromBundle(name: String, extension: String): String {
     val resourceName = "$name.$extension"
-    val resourceUrl = Thread.currentThread().contextClassLoader.getResource(resourceName)
+    val inputStream = resourceLoader.getResourceAsStream(resourceName)
         ?: error("File $resourceName not found in resources")
 
-    return File(resourceUrl.toURI()).readText(Charsets.UTF_8)
+    return inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
 }
 
 actual fun getImageBase64(fileName: String): String {
-    val inputStream = Thread.currentThread()
-        .contextClassLoader
-        .getResourceAsStream(fileName) ?: error("Image not found in resources")
+    val inputStream = resourceLoader.getResourceAsStream(fileName)
+        ?: error("Image not found in resources")
 
-    val bytes = inputStream.readBytes()
+    val bytes = inputStream.use { it.readBytes() }
     return Base64.getEncoder().encodeToString(bytes)
 }

@@ -11,7 +11,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("ru.ok.tracer") version "1.4.0"
+    id("ru.ok.tracer") version "1.5.1"
+    id("dev.nucleusframework") version "2.5.18"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.4.20"
 }
 
@@ -139,11 +140,11 @@ kotlin {
             implementation("com.github.bhuvaneshw.pdfviewer:compose:1.1.0")
             implementation("com.github.bhuvaneshw.pdfviewer:compose-ui:1.1.0")
 
-            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.4.0"))
+            implementation(project.dependencies.platform("ru.ok.tracer:tracer-platform:1.5.1"))
             implementation("ru.ok.tracer:tracer-crash-report")
             implementation("ru.ok.tracer:tracer-profiler-sampling")
             
-            implementation("com.yandex.android:mobileads:8.5.0")
+            implementation(libs.yandex.android.mobileads)
 
             implementation(libs.ktor.client.android)
             implementation(libs.compose.uiToolingPreview)
@@ -158,7 +159,9 @@ kotlin {
             kotlin.srcDir(generatedAppConfigDir)
 
             dependencies {
-                implementation("io.github.kdroidfilter:composewebview:1.0.0-beta-02")
+                implementation(libs.androidx.collection)
+
+                implementation("dev.nucleusframework:composewebview:1.0.3")
 
                 implementation("com.kizitonwose.calendar:compose-multiplatform:2.9.0")
                 implementation(libs.kotlinx.datetime)
@@ -193,6 +196,9 @@ kotlin {
         }
 
         desktopMain.dependencies {
+            implementation("dev.nucleusframework:nucleus.nucleus-application:2.5.18")
+            implementation("dev.nucleusframework:nucleus.decorated-window-tao:2.5.18")
+
             implementation("io.github.conamobiledev:pdfkmp:1.3.0")
             implementation("io.github.conamobiledev:pdfkmp-viewer:1.3.0")
             implementation("io.github.kdroidfilter:platformtools.appmanager:0.7.5")
