@@ -5,7 +5,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.UIKitView
+import com.pomidorka.scheduleaag.schedule.PdfDownloader
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import platform.Foundation.*
 import platform.PDFKit.PDFDocument
@@ -13,14 +18,12 @@ import platform.PDFKit.PDFSelection
 import platform.PDFKit.PDFView
 import platform.UIKit.UIColor
 
+@OptIn(ExperimentalForeignApi::class)
 @Composable
 actual fun PdfViewer(
     modifier: Modifier,
-    urlPdf: String,
     searchTextState: String,
-    onLoading: () -> Unit,
-    onLoaded: () -> Unit,
-    onError: (Throwable) -> Unit
+    downloader: PdfDownloader,
 ) {
     val pdfView = remember {
         PDFView().apply {
@@ -29,22 +32,26 @@ actual fun PdfViewer(
     }
     var isReady by remember { mutableStateOf(false) }
 
-    if (!isReady) {
-        onLoading()
-    }
-
-    LaunchedEffect(urlPdf) {
+    LaunchedEffect(downloader.urlPdf) {
         withContext(Dispatchers.Default) {
             try {
-                val nsUrl = NSURL(string = urlPdf)
-                val doc = PDFDocument(nsUrl)
+                val nsData = withContext(Dispatchers.IO) {
+                    val bytes = downloader.loadBytes()
+                    bytes!!.usePinned { pinned ->
+                        NSData.dataWithBytes(pinned.addressOf(0), bytes.size.toULong())
+                    }
+                }
+
+                val doc = PDFDocument(data = nsData)
+
                 withContext(Dispatchers.Main) {
                     pdfView.document = doc
                 }
                 isReady = true
-                onLoaded()
             } catch (e: Exception) {
-                onError(e)
+                e.message?.let { error ->
+                    downloader.sendErrorEvent(error)
+                }
             }
         }
     }

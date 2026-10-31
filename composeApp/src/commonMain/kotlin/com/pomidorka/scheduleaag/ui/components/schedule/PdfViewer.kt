@@ -2,15 +2,13 @@ package com.pomidorka.scheduleaag.ui.components.schedule
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.pomidorka.scheduleaag.schedule.PdfDownloader
 
 @Composable
 expect fun PdfViewer(
     modifier: Modifier,
-    urlPdf: String,
     searchTextState: String,
-    onLoading: () -> Unit,
-    onLoaded: () -> Unit,
-    onError: (Throwable) -> Unit
+    downloader: PdfDownloader,
 )
 
 fun getPdfViewerHtml(urlPdf: String): String {

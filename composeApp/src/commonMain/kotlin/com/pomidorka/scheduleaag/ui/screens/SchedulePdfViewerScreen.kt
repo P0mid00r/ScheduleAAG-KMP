@@ -9,12 +9,8 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -27,16 +23,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.ad.AdManager
+import com.pomidorka.scheduleaag.schedule.PdfLoadingState
+import com.pomidorka.scheduleaag.schedule.rememberPdfDownloader
 import com.pomidorka.scheduleaag.ui.Green
 import com.pomidorka.scheduleaag.ui.components.BackgroundCells
 import com.pomidorka.scheduleaag.ui.components.NavigationBar
 import com.pomidorka.scheduleaag.ui.components.TopAppBarWithToolBar
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialog
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialogController
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
-import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
+import com.pomidorka.scheduleaag.ui.components.alertdialogs.*
 import com.pomidorka.scheduleaag.ui.components.schedule.PdfViewer
+import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.currentPlatform
+import kotlin.math.roundToInt
 
 @Composable
 fun SchedulePdfViewerScreen(
@@ -44,13 +41,14 @@ fun SchedulePdfViewerScreen(
     url: String
 ) {
     val isNotDesktopOrWeb = !(currentPlatform().type.isDesktop || currentPlatform().type.isWeb)
+    val pdfDownloader = rememberPdfDownloader(url)
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     var searchBarVisible by rememberSaveable { mutableStateOf(false) }
     var isShowPdfViewer by rememberSaveable { mutableStateOf(true) }
     val loadingDialogController = LoadingDialogController(Strings.PROGRESS_DIALOG_SCHEDULE)
-    val errorDialogController = ErrorDialogController(
+    val errorDialogController = rememberErrorDialogController(
         onConfirm = {
             it.hideDialog()
             isShowPdfViewer = false
@@ -61,8 +59,38 @@ fun SchedulePdfViewerScreen(
     var searchTextState by rememberSaveable { mutableStateOf("") }
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
+    val progressState by pdfDownloader.pdfLoadingState.collectAsState()
+    var progress by remember { mutableIntStateOf(-1) }
+    val showProgressBar by remember {
+        derivedStateOf { progress in 0..100 }
+    }
+
+    if (showProgressBar && !loadingDialogController.isVisible) {
+        ProgressDialog(
+            progress = progress,
+        )
+    }
     LoadingDialog(loadingDialogController)
     ErrorDialog(errorDialogController)
+
+    LaunchedEffect(progressState) {
+        Log.info("SCHEDULE PDF VIEWER SCREEN") { progressState.toString() }
+
+        when (val state = progressState) {
+            PdfLoadingState.Initialization -> loadingDialogController.showDialog()
+            PdfLoadingState.Started -> loadingDialogController.hideDialog()
+            is PdfLoadingState.Loading -> progress = state.progress.roundToInt()
+            PdfLoadingState.Loaded -> {
+                loadingDialogController.hideDialog()
+                progress = -1
+            }
+            is PdfLoadingState.Failed -> {
+                progress = -1
+                loadingDialogController.hideDialog()
+                errorDialogController.showDialog("Произошла ошибка при скачивании файла")
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -162,18 +190,8 @@ fun SchedulePdfViewerScreen(
             if (isShowPdfViewer) {
                 PdfViewer(
                     modifier = Modifier.fillMaxSize(),
-                    urlPdf = url,
                     searchTextState = if (searchBarVisible) searchTextState else "",
-                    onLoading = {
-                        loadingDialogController.showDialog()
-                    },
-                    onLoaded = {
-                        loadingDialogController.hideDialog()
-                    },
-                    onError = {
-                        errorDialogController.showDialog(it.message!!)
-                        loadingDialogController.hideDialog()
-                    }
+                    downloader = pdfDownloader,
                 )
             }
         }

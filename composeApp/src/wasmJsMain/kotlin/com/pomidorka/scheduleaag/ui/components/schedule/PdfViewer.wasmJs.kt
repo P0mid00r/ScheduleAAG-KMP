@@ -5,22 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.pomidorka.scheduleaag.schedule.PdfDownloader
 import com.pomidorka.scheduleaag.ui.components.CustomWebView
 import com.pomidorka.scheduleaag.utils.isErrorRequest
-import io.github.kdroidfilter.webview.web.LoadingState
-import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
+import dev.nucleusframework.webview.web.LoadingState
+import dev.nucleusframework.webview.web.rememberWebViewStateWithHTMLData
 
 @Composable
 actual fun PdfViewer(
     modifier: Modifier,
-    urlPdf: String,
     searchTextState: String,
-    onLoading: () -> Unit,
-    onLoaded: () -> Unit,
-    onError: (Throwable) -> Unit
+    downloader: PdfDownloader,
 ) {
     val webViewState = rememberWebViewStateWithHTMLData(
-        data = getPdfViewerHtml(urlPdf),
+        data = getPdfViewerHtml(downloader.urlPdf),
         mimeType = "text/html",
     ).apply {
         webSettings.apply {
@@ -33,12 +31,12 @@ actual fun PdfViewer(
         when (webViewState.loadingState) {
             LoadingState.Initializing -> {}
 
-            is LoadingState.Loading -> onLoading()
+            is LoadingState.Loading -> {}
 
             LoadingState.Finished -> {
                 if (webViewState.isErrorRequest()) {
-                    onError(Throwable("Произошла ошибка при загрузке pdf"))
-                } else onLoaded()
+                    downloader.sendErrorEvent("Произошла ошибка при загрузке pdf")
+                }
             }
         }
     }
