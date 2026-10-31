@@ -18,6 +18,11 @@ import com.pomidorka.scheduleaag.Strings
 import com.pomidorka.scheduleaag.ui.components.BackgroundCells
 import com.pomidorka.scheduleaag.ui.components.TopAppBar
 
+private val aboutHtml = Strings.HTML_INFO_DIALOG.replace(
+    oldValue = "</body>",
+    newValue = "<br><b>Версия: ${AppConfig.VERSION_NAME}</b></br></body>"
+).trimIndent()
+
 @Composable
 fun AboutAppDialog(
     visible: Boolean,
@@ -25,11 +30,7 @@ fun AboutAppDialog(
 ) {
     if (visible) {
         val state = rememberRichTextState().apply {
-            val html = Strings.HTML_INFO_DIALOG.replace(
-                oldValue = "</body>",
-                newValue = "<br><b>Версия: ${AppConfig.VERSION_NAME}</b></br></body>"
-            ).trimIndent()
-            setHtml(html)
+            setHtml(aboutHtml)
         }
 
         Dialog(
