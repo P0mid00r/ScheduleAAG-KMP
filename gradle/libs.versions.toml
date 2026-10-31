@@ -30,6 +30,7 @@ logback = "1.6.3"
 
 [libraries]
 androidx-collection = { module = "androidx.collection:collection", version.ref = "collection" }
+androidx-collection-jvm = { group = "androidx.collection", name = "collection-jvm", version.ref = "collection" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
 #compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }

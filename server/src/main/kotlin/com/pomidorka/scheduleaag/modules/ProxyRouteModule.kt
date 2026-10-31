@@ -1,5 +1,6 @@
 package com.pomidorka.scheduleaag.modules
 
+import com.pomidorka.scheduleaag.schedule.PdfMemoryCache
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -7,10 +8,16 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.utils.io.readAvailable
-import io.ktor.utils.io.writeFully
+import io.ktor.utils.io.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import java.io.ByteArrayOutputStream
 
 fun Application.configureProxyRoute() {
+    val cacheScope = CoroutineScope(SupervisorJob() + Dispatchers.IO )
+    val pdfCache = PdfMemoryCache(maxSize = 300, scope = cacheScope)
+
     routing {
         get("/proxy") {
             call.queryParameters["url"]?.let { url ->
@@ -24,29 +31,22 @@ fun Application.configureProxyRoute() {
                 val isPdfFile = url.endsWith(".pdf")
 
                 runCatching {
-                    val newResponse = client.get(targetUrl) {
-                        call.request.copyRequestToResponse()
-
-                        contentType(call.request.contentType())
-                        val body = call.receiveText()
-                        setBody(body)
-                    }
-
-                    val statusCode = newResponse.status
-                    if (isPdfFile) call.respondBytesWriter(
-                        contentType = newResponse.contentType(),
-                        status = newResponse.status,
-                        contentLength = newResponse.contentLength()
-                    ) {
-                        val channel = newResponse.bodyAsChannel()
-                        val buffer = ByteArray(8192)
-                        while (!channel.isClosedForRead) {
-                            val read = channel.readAvailable(buffer, 0, buffer.size)
-                            if (read <= 0) break
-                            writeFully(buffer, 0, read)
+                    if (isPdfFile) {
+                        val pdfBytes = pdfCache.getOrPutConcurrent(targetUrl) {
+                            loadPdfBytes(targetUrl)
                         }
+                        call.respondBytes(pdfBytes, call.request.contentType())
+                    } else {
+                        val newResponse = client.get(targetUrl) {
+                            call.request.copyRequestToResponse()
+
+                            contentType(call.request.contentType())
+                            val body = call.receiveText()
+                            setBody(body)
+                        }
+                        val statusCode = newResponse.status
+                        call.respond(statusCode,newResponse.bodyAsText())
                     }
-                    else call.respond(statusCode,newResponse.bodyAsText())
                 }.onFailure { call.respond(HttpStatusCode.BadRequest) }
             } ?: call.respond(HttpStatusCode.BadRequest)
         }
@@ -73,6 +73,19 @@ fun Application.configureProxyRoute() {
             } ?: call.respond(HttpStatusCode.BadRequest)
         }
     }
+}
+
+private suspend fun loadPdfBytes(url: String): ByteArray {
+    val response = client.get(url)
+    val channel = response.bodyAsChannel()
+    val buffer = ByteArray(8192)
+    val output = ByteArrayOutputStream()
+    while (!channel.isClosedForRead) {
+        val read = channel.readAvailable(buffer, 0, buffer.size)
+        if (read <= 0) break
+        output.write(buffer, 0, read)
+    }
+    return output.toByteArray()
 }
 
 private fun String.toUrlFormat(): String {

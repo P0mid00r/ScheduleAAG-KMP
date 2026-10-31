@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
+    implementation(libs.androidx.collection.jvm)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.ktor.serverTestHost)
