@@ -24,12 +24,12 @@ import com.pomidorka.scheduleaag.ui.components.alertdialogs.ErrorDialogControlle
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
 import com.pomidorka.scheduleaag.ui.navigation.Route
-import io.github.kdroidfilter.webview.request.RequestInterceptor
-import io.github.kdroidfilter.webview.request.WebRequest
-import io.github.kdroidfilter.webview.request.WebRequestInterceptResult
-import io.github.kdroidfilter.webview.web.WebViewNavigator
-import io.github.kdroidfilter.webview.web.rememberWebViewNavigator
-import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
+import dev.nucleusframework.webview.request.RequestInterceptor
+import dev.nucleusframework.webview.request.WebRequest
+import dev.nucleusframework.webview.request.WebRequestInterceptResult
+import dev.nucleusframework.webview.web.WebViewNavigator
+import dev.nucleusframework.webview.web.rememberWebViewNavigator
+import dev.nucleusframework.webview.web.rememberWebViewStateWithHTMLData
 import kotlinx.coroutines.launch
 
 @Composable
@@ -108,9 +108,15 @@ fun ScheduleDopSelectorScreen(
                 scope.launch {
                     loadingDialogController.showDialog()
 
-                    html = ScheduleApi.getDopHtml().let {
+                    html = ScheduleApi.getScheduleDop().let {
                         return@let when(it) {
-                            is Result.Success -> it.data
+                            is Result.Success -> {
+                                var allHtml = ""
+                                it.data.forEach {
+                                    allHtml += it.value
+                                }
+                                allHtml
+                            }
                             is Result.Failure -> null
                         }
                     }

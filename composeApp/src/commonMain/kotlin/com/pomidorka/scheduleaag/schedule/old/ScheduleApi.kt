@@ -12,7 +12,7 @@ object ScheduleApi : Parser() {
 
     suspend fun getAllMonthHtml(collegeBuilding: CollegeBuilding) = parseAllMonthHtml(collegeBuilding.toUrl())
 
-    suspend fun getDopHtml() = parseAllMonthHtml("https://altag.ru/student/schedule/schedul_dop")
+    suspend fun getScheduleDop() = parseDopSchedule()
 
     suspend fun getScheduleCallsHtml() = parseScheduleCallsHtml(
         "https://altag.ru/student/schedule/call_schedule"

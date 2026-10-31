@@ -15,6 +15,33 @@ import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 
 sealed class Parser {
+    suspend fun parseDopSchedule(): Result<Map<String, String>> {
+        return try {
+            val doc = loadDocument("https://altag.ru/student/schedule/schedul_dop")
+            val h1s = doc.select("div.mtext > h1")
+
+            val result = linkedMapOf<String, String>()
+
+            for (h1 in h1s) {
+                val sb = StringBuilder()
+                sb.append(h1.outerHtml())
+
+                var sibling = h1.nextElementSibling()
+                while (sibling != null && !sibling.tagName().equals("h1", ignoreCase = true)) {
+                    sb.append(sibling.outerHtml())
+                    sibling = sibling.nextElementSibling()
+                }
+
+                val block = """<div class="mtext">$sb</div>"""
+                result[h1.text().trim()] = block
+            }
+
+            Result.Success(result)
+        } catch (_: Exception) {
+            Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
+
     suspend fun parseAllMonthHtml(url: String): Result<String> {
         return try {
             val doc = loadDocument(url)

@@ -30,12 +30,12 @@ import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialog
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.LoadingDialogController
 import com.pomidorka.scheduleaag.ui.navigation.Route
 import com.pomidorka.scheduleaag.utils.currentPlatform
-import io.github.kdroidfilter.webview.request.RequestInterceptor
-import io.github.kdroidfilter.webview.request.WebRequest
-import io.github.kdroidfilter.webview.request.WebRequestInterceptResult
-import io.github.kdroidfilter.webview.web.WebViewNavigator
-import io.github.kdroidfilter.webview.web.rememberWebViewNavigator
-import io.github.kdroidfilter.webview.web.rememberWebViewStateWithHTMLData
+import dev.nucleusframework.webview.request.RequestInterceptor
+import dev.nucleusframework.webview.request.WebRequest
+import dev.nucleusframework.webview.request.WebRequestInterceptResult
+import dev.nucleusframework.webview.web.WebViewNavigator
+import dev.nucleusframework.webview.web.rememberWebViewNavigator
+import dev.nucleusframework.webview.web.rememberWebViewStateWithHTMLData
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,7 +43,7 @@ fun ScheduleDaysSelectorScreen(
     navController: NavHostController,
     collegeBuilding: CollegeBuilding
 ) {
-    val isNotDesktopOrWeb = !(currentPlatform().type.isDesktop || currentPlatform().type.isWeb)
+    val isNotWeb = currentPlatform().type.isNotWeb
     var selectedCollegeBuilding by rememberSaveable(saver = CollegeBuilding.Saver) { mutableStateOf(collegeBuilding) }
     val scope = rememberCoroutineScope()
     var html: String? by rememberSaveable { mutableStateOf(null) }
@@ -100,8 +100,8 @@ fun ScheduleDaysSelectorScreen(
                     navController.popBackStack()
                 },
                 actions = {
-                    // TODO Работает нормально только на мобильных платформах, на остальных надо костыль делать)
-                    if (isNotDesktopOrWeb) {
+                    // TODO Работает нормально везде кроме веба, надо костыль делать)
+                    if (isNotWeb) {
                         var expandedDropdownMenu by remember { mutableStateOf(false) }
 
                         DropdownMenu(
