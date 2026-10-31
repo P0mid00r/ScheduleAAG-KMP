@@ -29,7 +29,6 @@ import com.pomidorka.scheduleaag.schedule.Result
 import com.pomidorka.scheduleaag.schedule.interactive.FilterType
 import com.pomidorka.scheduleaag.schedule.interactive.ScheduleType
 import com.pomidorka.scheduleaag.schedule.old.ScheduleApi
-import com.pomidorka.scheduleaag.schedule.old.ScheduleApi.toUrl
 import com.pomidorka.scheduleaag.ui.Brown
 import com.pomidorka.scheduleaag.ui.Green
 import com.pomidorka.scheduleaag.ui.components.BackgroundCells
@@ -211,8 +210,8 @@ private fun ButtonsPanel(
                         scope.launch {
                             loadingDialog.showDialog()
 
-                            val result = ScheduleApi.parseScheduleTodayUrl(
-                                SettingsData.selectedCollegeBuilding.toUrl()
+                            val result = ScheduleApi.getScheduleTodayUrl(
+                                SettingsData.selectedCollegeBuilding
                             )
 
                             loadingDialog.hideDialog()
@@ -262,8 +261,8 @@ private fun ButtonsPanel(
                         scope.launch {
                             loadingDialog.showDialog()
 
-                            val result = ScheduleApi.parseScheduleNextDayUrl(
-                                SettingsData.selectedCollegeBuilding.toUrl()
+                            val result = ScheduleApi.getScheduleNextDayUrl(
+                                SettingsData.selectedCollegeBuilding
                             )
 
                             loadingDialog.hideDialog()

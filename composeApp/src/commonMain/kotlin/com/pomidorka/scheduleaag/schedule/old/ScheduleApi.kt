@@ -5,7 +5,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
-object ScheduleApi : Parser() {
+object ScheduleApi : ScheduleTableParser() {
     fun CollegeBuilding.toUrl(): String {
         return "https://altag.ru/student/schedule/rescheduling-${this.id}"
     }

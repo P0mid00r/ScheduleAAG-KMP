@@ -31,7 +31,6 @@ import com.pomidorka.scheduleaag.ui.components.NavigationBar
 import com.pomidorka.scheduleaag.ui.components.TopAppBarWithToolBar
 import com.pomidorka.scheduleaag.ui.components.alertdialogs.*
 import com.pomidorka.scheduleaag.ui.components.schedule.PdfViewer
-import com.pomidorka.scheduleaag.utils.Log
 import com.pomidorka.scheduleaag.utils.currentPlatform
 import kotlin.math.roundToInt
 
@@ -74,8 +73,6 @@ fun SchedulePdfViewerScreen(
     ErrorDialog(errorDialogController)
 
     LaunchedEffect(progressState) {
-        Log.info("SCHEDULE PDF VIEWER SCREEN") { progressState.toString() }
-
         when (val state = progressState) {
             PdfLoadingState.Initialization -> loadingDialogController.showDialog()
             PdfLoadingState.Started -> loadingDialogController.hideDialog()

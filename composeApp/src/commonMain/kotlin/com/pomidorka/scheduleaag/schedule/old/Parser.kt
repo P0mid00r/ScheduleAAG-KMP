@@ -14,6 +14,7 @@ import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 
+@Deprecated("Перейти на ScheduleTableParser. Parser будет скоро удален!")
 sealed class Parser {
     suspend fun parseDopSchedule(): Result<Map<String, String>> {
         return try {
@@ -148,9 +149,103 @@ sealed class Parser {
     private fun Document.parseTables() = this.getElementsByTag("tbody")
 }
 
-class ScheduleTableParser {
+sealed class ScheduleTableParser {
+    suspend fun parseScheduleCallsHtml(url: String): Result<String> {
+        return try {
+            val doc = loadDocument(url)
+            Result.Success(doc.parseContainer().toString())
+        } catch (_: Exception) {
+            Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
+
+    suspend fun parseAllMonthHtml(url: String): Result<String> {
+        return try {
+            val doc = loadDocument(url)
+            Result.Success(doc.parseContainer().toString())
+        } catch (_: Exception) {
+            Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
+
+    suspend fun parseDopSchedule(): Result<Map<String, String>> {
+        return try {
+            val doc = loadDocument("https://altag.ru/student/schedule/schedul_dop")
+            val h1s = doc.select("div.mtext > h1")
+
+            val result = linkedMapOf<String, String>()
+
+            for (h1 in h1s) {
+                val sb = StringBuilder()
+                sb.append(h1.outerHtml())
+
+                var sibling = h1.nextElementSibling()
+                while (sibling != null && !sibling.tagName().equals("h1", ignoreCase = true)) {
+                    sb.append(sibling.outerHtml())
+                    sibling = sibling.nextElementSibling()
+                }
+
+                val block = """<div class="mtext">$sb</div>"""
+                result[h1.text().trim()] = block
+            }
+
+            Result.Success(result)
+        } catch (_: Exception) {
+            Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
+
     suspend fun getScheduleTables(collegeBuilding: CollegeBuilding)
         = getScheduleTables("https://altag.ru/student/schedule/rescheduling-${collegeBuilding.id}")
+
+    suspend fun getScheduleTodayUrl(collegeBuilding: CollegeBuilding): Result<String> {
+        return when (val result = getScheduleTables(collegeBuilding)) {
+            is Result.Success -> {
+                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+                val url = result.data.first {
+                    it.month == today.month
+                }.scheduleDays.find {
+                    it.date == today
+                }?.url
+
+                if (url == null) Result.Failure(Throwable(Strings.SCHEDULE_TODAY_ERROR))
+                else Result.Success(url)
+            }
+            is Result.Failure -> Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
+
+    suspend fun getScheduleNextDayUrl(collegeBuilding: CollegeBuilding): Result<String> {
+        return when (val result = getScheduleTables(collegeBuilding)) {
+            is Result.Success -> {
+                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                val allDays = result.data
+                    .flatMap { it.scheduleDays }
+                    .sortedBy { it.date }
+
+                val lastAvailableDate = allDays.lastOrNull()?.date
+                    ?: return Result.Failure(Throwable(Strings.SCHEDULE_NEXT_DAY_ERROR))
+
+                var candidate = today + DatePeriod(days = 1)
+
+                while (candidate <= lastAvailableDate) {
+                    val url = allDays
+                        .firstOrNull { it.date == candidate }
+                        ?.url
+
+                    if (!url.isNullOrBlank()) {
+                        return Result.Success(url)
+                    }
+
+                    candidate += DatePeriod(days = 1)
+                }
+
+                Result.Failure(Throwable(Strings.SCHEDULE_NEXT_DAY_ERROR))
+            }
+            is Result.Failure -> Result.Failure(Throwable(Strings.SITE_CONNECTION_ERROR))
+        }
+    }
 
     suspend fun getScheduleTables(url: String): Result<List<ScheduleMonth>> {
         return try{
