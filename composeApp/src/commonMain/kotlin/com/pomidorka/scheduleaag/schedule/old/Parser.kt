@@ -205,7 +205,7 @@ sealed class ScheduleTableParser {
 
                 val url = result.data.first {
                     it.month == today.month
-                }.scheduleDays.find {
+                }.scheduleDays.firstOrNull {
                     it.date == today
                 }?.url
 

@@ -26,9 +26,10 @@ private suspend fun <T> HttpClient.executeWithProxyForWebApp(
     url: String,
     block: suspend HttpClient.(String) -> T
 ): T {
+    // TODO: Когда будет настроен сертификат поменять местами прокси
     return try {
-        this.block(Strings.PROXY + url)
-    } catch (_: Exception) {
         this.block(Strings.SECOND_PROXY_FOR_WEB_APP + url)
+    } catch (_: Exception) {
+        this.block(Strings.PROXY + url)
     }
 }
