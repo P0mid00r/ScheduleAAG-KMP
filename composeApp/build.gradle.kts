@@ -1,9 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import java.util.Properties
+import java.util.*
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -308,7 +307,7 @@ compose.desktop {
 
         buildTypes.release.proguard {
             isEnabled.set(true)
-            obfuscate.set(true)
+            obfuscate.set(false)
             configurationFiles.from("compose-desktop.pro")
         }
 
