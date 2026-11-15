@@ -2,6 +2,7 @@ package com.pomidorka.scheduleaag.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.HtmlElementView
@@ -9,6 +10,7 @@ import dev.nucleusframework.webview.jsbridge.WebViewJsBridge
 import dev.nucleusframework.webview.request.WebRequest
 import dev.nucleusframework.webview.web.NativeWebView
 import dev.nucleusframework.webview.web.WebContent
+import dev.nucleusframework.webview.web.WebView
 import dev.nucleusframework.webview.web.WebViewNavigator
 import dev.nucleusframework.webview.web.WebViewState
 import kotlinx.browser.document
@@ -67,19 +69,26 @@ actual fun CustomWebView(
         }
     }
 
-    HtmlElementView(
-        factory = {
-            (document.createElement("iframe")
-                    as HTMLIFrameElement).apply {
-                style.apply {
-                    border = "none"
-                    width = "100%"
-                    height = "100%"
-                }
-                srcdoc = script + (state.content as WebContent.Data).data
-            }
-        },
+//    HtmlElementView(
+//        factory = {
+//            (document.createElement("iframe")
+//                    as HTMLIFrameElement).apply {
+//                style.apply {
+//                    border = "none"
+//                    width = "100%"
+//                    height = "100%"
+//                }
+//                srcdoc = script + (state.content as WebContent.Data).data
+//            }
+//        },
+//        modifier = modifier,
+//        update = { iframe -> iframe.srcdoc = iframe.srcdoc }
+//    )
+
+    WebView(
         modifier = modifier,
-        update = { iframe -> iframe.srcdoc = iframe.srcdoc }
+        state = state,
+        onCreated = onCreated,
+        onDispose = onDispose,
     )
 }

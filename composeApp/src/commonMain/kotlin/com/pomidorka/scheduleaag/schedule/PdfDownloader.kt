@@ -47,6 +47,12 @@ class PdfDownloader(
         }
     }
 
+    fun sendLoadedEvent() {
+        pdfLoadingState.update {
+            PdfLoadingState.Loaded
+        }
+    }
+
     suspend fun loadBytes(): ByteArray? {
         pdfDownloaderListener?.onInitialization()
         pdfLoadingState.update {

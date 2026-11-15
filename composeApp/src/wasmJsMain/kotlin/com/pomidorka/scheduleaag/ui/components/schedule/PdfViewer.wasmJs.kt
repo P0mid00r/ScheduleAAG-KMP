@@ -36,6 +36,8 @@ actual fun PdfViewer(
             LoadingState.Finished -> {
                 if (webViewState.isErrorRequest()) {
                     downloader.sendErrorEvent("Произошла ошибка при загрузке pdf")
+                } else {
+                    downloader.sendLoadedEvent()
                 }
             }
         }
